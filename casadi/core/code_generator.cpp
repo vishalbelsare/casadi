@@ -32,7 +32,7 @@
 using namespace std;
 namespace casadi {
 
-  CodeGenerator::CodeGenerator(const string& name, const Dict& opts) {
+  CodeGenerator::CodeGenerator(const string& name, const Dict& opts) : VectorCache() {
     // Default options
     this->verbose = true;
     this->mex = false;
@@ -564,81 +564,8 @@ namespace casadi {
     return "casadi_" + name;
   }
 
-  casadi_int CodeGenerator::add_sparsity(const Sparsity& sp) {
-    return get_constant(sp, true);
-  }
-
   string CodeGenerator::sparsity(const Sparsity& sp) {
     return shorthand("s" + str(add_sparsity(sp)));
-  }
-
-  casadi_int CodeGenerator::get_sparsity(const Sparsity& sp) const {
-    return const_cast<CodeGenerator&>(*this).get_constant(sp, false);
-  }
-
-  size_t CodeGenerator::hash(const vector<double>& v) {
-    // Calculate a hash value for the vector
-    std::size_t seed=0;
-    if (!v.empty()) {
-      casadi_assert_dev(sizeof(double) % sizeof(size_t)==0);
-      const casadi_int int_len = v.size()*(sizeof(double)/sizeof(size_t));
-      const size_t* int_v = reinterpret_cast<const size_t*>(&v.front());
-      for (size_t i=0; i<int_len; ++i) {
-        hash_combine(seed, int_v[i]);
-      }
-    }
-    return seed;
-  }
-
-  size_t CodeGenerator::hash(const vector<casadi_int>& v) {
-    size_t seed=0;
-    hash_combine(seed, v);
-    return seed;
-  }
-
-  casadi_int CodeGenerator::get_constant(const vector<double>& v, bool allow_adding) {
-    // Hash the vector
-    size_t h = hash(v);
-
-    // Try to locate it in already added constants
-    auto eq = added_double_constants_.equal_range(h);
-    for (auto i=eq.first; i!=eq.second; ++i) {
-      if (equal(v, double_constants_[i->second])) return i->second;
-    }
-
-    if (allow_adding) {
-      // Add to constants
-      casadi_int ind = double_constants_.size();
-      double_constants_.push_back(v);
-      added_double_constants_.insert(make_pair(h, ind));
-      return ind;
-    } else {
-      casadi_error("Constant not found");
-      return -1;
-    }
-  }
-
-  casadi_int CodeGenerator::get_constant(const vector<casadi_int>& v, bool allow_adding) {
-    // Hash the vector
-    size_t h = hash(v);
-
-    // Try to locate it in already added constants
-    pair<multimap<size_t, size_t>::iterator, multimap<size_t, size_t>::iterator> eq =
-      added_integer_constants_.equal_range(h);
-    for (multimap<size_t, size_t>::iterator i=eq.first; i!=eq.second; ++i) {
-      if (equal(v, integer_constants_[i->second])) return i->second;
-    }
-
-    if (allow_adding) {
-      // Add to constants
-      casadi_int ind = integer_constants_.size();
-      integer_constants_.push_back(v);
-      added_integer_constants_.insert(pair<size_t, size_t>(h, ind));
-      return ind;
-    } else {
-      casadi_error("Constant not found");
-      return -1;
-    }
   }
 
   string CodeGenerator::constant(const vector<casadi_int>& v) {
@@ -1337,5 +1264,79 @@ namespace casadi {
     return "casadi_ldl_solve(" + x + ", " + str(nrhs) + ", " + sp_lt + ", "
            + lt + ", " + d + ", " + p + ", " + w + ");";
   }
+
+  casadi_int VectorCache::add_sparsity(const Sparsity& sp) {
+    return get_constant(sp, true);
+  }
+
+  casadi_int VectorCache::get_sparsity(const Sparsity& sp) const {
+    return const_cast<VectorCache&>(*this).get_constant(sp, false);
+  }
+
+  size_t VectorCache::hash(const vector<double>& v) {
+    // Calculate a hash value for the vector
+    std::size_t seed=0;
+    if (!v.empty()) {
+      casadi_assert_dev(sizeof(double) % sizeof(size_t)==0);
+      const casadi_int int_len = v.size()*(sizeof(double)/sizeof(size_t));
+      const size_t* int_v = reinterpret_cast<const size_t*>(&v.front());
+      for (size_t i=0; i<int_len; ++i) {
+        hash_combine(seed, int_v[i]);
+      }
+    }
+    return seed;
+  }
+
+  size_t VectorCache::hash(const vector<casadi_int>& v) {
+    size_t seed=0;
+    hash_combine(seed, v);
+    return seed;
+  }
+
+  casadi_int VectorCache::get_constant(const vector<double>& v, bool allow_adding) {
+    // Hash the vector
+    size_t h = hash(v);
+
+    // Try to locate it in already added constants
+    auto eq = added_double_constants_.equal_range(h);
+    for (auto i=eq.first; i!=eq.second; ++i) {
+      if (equal(v, double_constants_[i->second])) return i->second;
+    }
+
+    if (allow_adding) {
+      // Add to constants
+      casadi_int ind = double_constants_.size();
+      double_constants_.push_back(v);
+      added_double_constants_.insert(make_pair(h, ind));
+      return ind;
+    } else {
+      casadi_error("Constant not found");
+      return -1;
+    }
+  }
+
+  casadi_int VectorCache::get_constant(const vector<casadi_int>& v, bool allow_adding) {
+    // Hash the vector
+    size_t h = hash(v);
+
+    // Try to locate it in already added constants
+    pair<multimap<size_t, size_t>::iterator, multimap<size_t, size_t>::iterator> eq =
+      added_integer_constants_.equal_range(h);
+    for (multimap<size_t, size_t>::iterator i=eq.first; i!=eq.second; ++i) {
+      if (equal(v, integer_constants_[i->second])) return i->second;
+    }
+
+    if (allow_adding) {
+      // Add to constants
+      casadi_int ind = integer_constants_.size();
+      integer_constants_.push_back(v);
+      added_integer_constants_.insert(pair<size_t, size_t>(h, ind));
+      return ind;
+    } else {
+      casadi_error("Constant not found");
+      return -1;
+    }
+  }
+
 
 } // namespace casadi

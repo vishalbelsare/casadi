@@ -35,6 +35,7 @@ namespace casadi {
 #ifndef SWIG
   /** Forward declaration of internal class */
   class FunctionInternal;
+  class Serializer;
 
 #endif // SWIG
 
@@ -704,6 +705,9 @@ namespace casadi {
 #ifndef SWIG
     /** \brief Serialize */
     void serialize(std::ostream &stream) const;
+
+    /** \brief Serialize */
+    void serialize(Serializer &s) const;
 #endif
 
     /** \brief Serialize */

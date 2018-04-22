@@ -1540,6 +1540,17 @@ namespace casadi {
     casadi_error("'serialize' not defined for " + class_name());
   }
 
+  void FunctionInternal::serialize(Serializer &s) const {
+    s.pack(class_name());
+    s.pack(name());
+    s.pack(sparsity_in_);
+    s.pack(sparsity_out_);
+    s.pack(name_in_);
+    s.pack(name_out_);
+
+    casadi_error("'serialize' not defined for " + class_name());
+  }
+
   void assert_read(std::istream &stream, const std::string& s) {
     casadi_int n = s.size();
     char c;

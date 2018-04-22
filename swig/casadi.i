@@ -4023,6 +4023,7 @@ namespace casadi{
 
 %feature("copyctor", "0") casadi::CodeGenerator;
 %include <casadi/core/code_generator.hpp>
+%include <casadi/core/serializer.hpp>
 
 #ifdef SWIGMATLAB
 // Wrap (static) member functions

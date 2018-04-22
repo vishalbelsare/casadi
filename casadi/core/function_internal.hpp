@@ -474,6 +474,9 @@ namespace casadi {
     /** \brief Serialize */
     virtual void serialize(std::ostream &stream) const;
 
+    /** \brief Serialize */
+    virtual void serialize(Serializer &s) const;
+
     /** \brief Serialize function header */
     void serialize_header(std::ostream &stream) const;
 

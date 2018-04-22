@@ -122,6 +122,9 @@ namespace casadi {
     /** \brief Generate code for the body of the C function */
     void codegen_body(CodeGenerator& g) const override;
 
+    /** \brief Serialize */
+    void serialize(Serializer &s) const override;
+
     /** \brief Extract the residual function G and the modified function Z out of an expression
      * (see Albersmeyer2010 paper) */
     void generate_lifted(Function& vdef_fcn, Function& vinit_fcn) const override;

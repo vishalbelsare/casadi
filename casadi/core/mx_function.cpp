@@ -1636,4 +1636,7 @@ namespace casadi {
     return dep.stats(1);
   }
 
+  void MXFunction::serialize(Serializer &s) const {
+  }
+
 } // namespace casadi

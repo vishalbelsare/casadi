@@ -33,11 +33,53 @@
 
 namespace casadi {
 
+
+  class CASADI_EXPORT VectorCache {
+  public:
+    VectorCache() {};
+
+    // Add a sparsity pattern, get index
+    casadi_int add_sparsity(const Sparsity& sp);
+
+    /** \brief Get the index of an existing sparsity pattern */
+    casadi_int get_sparsity(const Sparsity& sp) const;
+
+    /** \brief Get or add a constant */
+    casadi_int get_constant(const std::vector<double>& v, bool allow_adding=false);
+
+    /** \brief Get or add an integer constant */
+    casadi_int get_constant(const std::vector<casadi_int>& v, bool allow_adding=false);
+
+  protected:
+
+    std::multimap<size_t, size_t> added_double_constants_;
+    std::multimap<size_t, size_t> added_integer_constants_;
+
+    // Constants
+    std::vector<std::vector<double> > double_constants_;
+    std::vector<std::vector<casadi_int> > integer_constants_;
+
+    // Hash a vector
+    static size_t hash(const std::vector<double>& v);
+    static size_t hash(const std::vector<casadi_int>& v);
+
+    // Compare two vectors
+    template<typename T>
+    static bool equal(const std::vector<T>& v1, const std::vector<T>& v2) {
+      if (v1.size()!=v2.size()) return false;
+      for (casadi_int j=0; j<v1.size(); ++j) {
+        if (v1[j]!=v2[j]) return false;
+      }
+      return true;
+    }
+
+  };
+
   /** \brief Helper class for C code generation
       \author Joel Andersson
       \date 2016
   */
-  class CASADI_EXPORT CodeGenerator {
+  class CASADI_EXPORT CodeGenerator : public VectorCache {
   public:
     /// Constructor
     CodeGenerator(const std::string& name, const Dict& opts = Dict());
@@ -79,18 +121,6 @@ namespace casadi {
 
     // Add a sparsity pattern
     std::string sparsity(const Sparsity& sp);
-
-    // Add a sparsity pattern, get index
-    casadi_int add_sparsity(const Sparsity& sp);
-
-    /** \brief Get the index of an existing sparsity pattern */
-    casadi_int get_sparsity(const Sparsity& sp) const;
-
-    /** \brief Get or add a constant */
-    casadi_int get_constant(const std::vector<double>& v, bool allow_adding=false);
-
-    /** \brief Get or add an integer constant */
-    casadi_int get_constant(const std::vector<casadi_int>& v, bool allow_adding=false);
 
     /** \brief Represent an array constant; adding it when new */
     std::string constant(const std::vector<casadi_int>& v);
@@ -435,8 +465,6 @@ namespace casadi {
     std::set<std::string> added_externals_;
     std::set<std::string> added_shorthands_;
     std::multimap<Auxiliary, std::vector<std::string>> added_auxiliaries_;
-    std::multimap<size_t, size_t> added_double_constants_;
-    std::multimap<size_t, size_t> added_integer_constants_;
     std::map<std::string, std::pair<std::string, std::string> > local_variables_;
     std::map<std::string, std::string> local_default_;
 
@@ -449,23 +477,6 @@ namespace casadi {
     };
     std::vector<FunctionMeta> added_functions_;
 
-    // Constants
-    std::vector<std::vector<double> > double_constants_;
-    std::vector<std::vector<casadi_int> > integer_constants_;
-
-    // Hash a vector
-    static size_t hash(const std::vector<double>& v);
-    static size_t hash(const std::vector<casadi_int>& v);
-
-    // Compare two vectors
-    template<typename T>
-    static bool equal(const std::vector<T>& v1, const std::vector<T>& v2) {
-      if (v1.size()!=v2.size()) return false;
-      for (casadi_int j=0; j<v1.size(); ++j) {
-        if (v1[j]!=v2[j]) return false;
-      }
-      return true;
-    }
     /// \endcond
 #endif // SWIG
   };
