@@ -38,32 +38,24 @@ Joel Andersson, 2015-2016
 
 int main(){
 
-  // Declare variables
-  SX x = SX::sym("x");
-  SX y = SX::sym("y");
-  SX z = SX::sym("z");
+  {
+    std::ofstream out("test.dat", ios::binary);
+    Serializer s(out);
 
-  // Formulate the NLP
-  SX f = pow(x,2) + 100*pow(z,2);
-  SX g = z + pow(1-x, 2) - y;
-  SXDict nlp = {{"x", SX::vertcat({x,y,z})},
-                {"f", f},
-                {"g", g}};
+    MX x = MX::sym("x");
+    MX y = MX::sym("y",2);
+    Function f = Function("f",{x,y},{x+y});
 
-  // Create an NLP solver
-  Function solver = nlpsol("solver", "ipopt", nlp);
+    s.add(f);
+  }
 
-  // Solve the Rosenbrock problem
-  DMDict arg;
-  arg["x0"] = vector<double>{2.5,3.0,0.75};
-  arg["lbg"] = arg["ubg"] = 0;
-  DMDict res = solver(arg);
+  uout() << "read" << std::endl;
+  {
+    std::ifstream in("test.dat", ios::binary);
+    DeSerializer s(in);
 
-  //  Print solution
-  cout << "Optimal cost:                     " << double(res.at("f")) << endl;
-  cout << "Primal solution:                  " << vector<double>(res.at("x")) << endl;
-  cout << "Dual solution (simple bounds):    " << vector<double>(res.at("lam_x")) << endl;
-  cout << "Dual solution (nonlinear bounds): " << vector<double>(res.at("lam_g")) << endl;
+    Function::deserialize(s);
+  }
 
   return 0;
 }

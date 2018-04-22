@@ -33,6 +33,7 @@
 #include "nlpsol.hpp"
 #include "conic.hpp"
 #include "jit_function.hpp"
+#include "serializer.hpp"
 
 #include <typeinfo>
 #include <fstream>
@@ -1035,8 +1036,34 @@ namespace casadi {
   }
 
   void Function::serialize(Serializer &s) const {
-    return (*this)->serialize(s);
+    s.pack((*this)->class_name());
+    s.pack(name());
+    s.pack((*this)->sparsity_in_);
+    s.pack((*this)->sparsity_out_);
+    s.pack((*this)->name_in_);
+    s.pack((*this)->name_out_);
+    (*this)->serialize(s);
   }
+
+  Function Function::deserialize(DeSerializer& s) {
+    std::string class_name, name;
+    std::vector<Sparsity> sp_in, sp_out;
+    std::vector<std::string> name_in, name_out;
+    s.unpack(class_name);
+    s.unpack(name);
+    s.unpack(sp_in);
+    s.unpack(sp_out);
+    s.unpack(name_in);
+    s.unpack(name_out);
+    uout() << class_name << std::endl;
+    uout() << name << std::endl;
+    uout() << sp_in << std::endl;
+    uout() << sp_out << std::endl;
+    uout() << name_in << std::endl;
+    uout() << name_out << std::endl;
+    return Function();
+  }
+
 
   std::string Function::export_code(const std::string& lang, const Dict& options) const {
     std::stringstream ss;
@@ -1097,6 +1124,7 @@ namespace casadi {
     ss << s;
     return deserialize(ss);
   }
+
 
   string Function::fix_name(const string& name) {
     // Quick return if already valid name

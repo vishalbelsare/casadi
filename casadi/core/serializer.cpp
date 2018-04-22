@@ -31,10 +31,25 @@
 using namespace std;
 namespace casadi {
 
-    /// Constructor
-    Serializer::Serializer(const Dict& /*opts*/) {
+    DeSerializer::DeSerializer(std::istream& in_s) : in(in_s) {
 
     }
+
+    //DeSerializer::DeSerializer(std::string& f_name) :
+  //    DeSerializer(std::ifstream(f_name, ios::binary)) {
+//
+  //  }
+
+    Serializer::Serializer(std::ostream& out_s, const Dict& /*opts*/) : out(out_s) {
+
+    }
+
+    /**
+    Serializer::Serializer(std::string& f_name, const Dict& opts) :
+      Serializer(std::ofstream(f_name, ios::binary)) {
+    }
+    */
+
 
     casadi_int Serializer::add(const Function& f) {
       // Quick return if already added
@@ -42,125 +57,79 @@ namespace casadi {
 
       added_functions_.push_back(f);
 
-      std::stringstream ss;
+      f.serialize(*this);
 
-      ss << "foo\0bar";
-
-      std::cout << "foo\0bar" << std::endl;
-      uout() << std::string("foo\0bar") << std::endl;
-      uout() << ss.str() << std::endl;
-      // Loop over algorithm
-      for (casadi_int k=0;k<f.n_instructions();++k) {
-        // Get operation
-        //casadi_int op = static_cast<casadi_int>(f.instruction_id(k));
-        // Get MX node
-        MX x = f.instruction_MX(k);
-        // Get input positions into workvector
-        //std::vector<casadi_int> o = f.instruction_output(k);
-        // Get output positions into workvector
-        //std::vector<casadi_int> i = f.instruction_input(k);
-
-        pack(x.info(), ss);
-      }
-
-      std::stringstream s;
-      pack(42LL, s);
-      pack(42.4, s);
-      std::string str = "foo";
-      str.push_back('\0');
-      str.push_back('b');
-      str.push_back('a');
-      pack(str, s);
-      std::vector<int> h{1,2,3,4};
-      pack(h, s);
-      uout() << "out" << s.str() << "(" << s.str().size() << ")" << std::endl;
-      std::istringstream is(s.str());
-      casadi_int a;
-      double b;
-      std::string c;
-      unpack(a, is);
-      unpack(b, is);
-      unpack(c, is);
-      std::vector<int> d;
-      unpack(d, is);
-      uout() << "out:" << a << "," << b << "," << c << "," << d << std::endl;
-
-      uout() << "out: '" << ss.str().size() << ":" << ss.str() << "'" << std::endl;
       return 0;
     }
 
-    void Serializer::unpack(casadi_int& e, std::istream& in) {
+    void DeSerializer::unpack(casadi_int& e) {
       int64_t n;
       char* c = reinterpret_cast<char*>(&n);
 
-      for (int j=0;j<8;++j) in >> c[j];
+      for (int j=0;j<8;++j) in.get(c[j]);
       e = n;
     }
 
-    void Serializer::pack(casadi_int e, std::ostream& out) {
+    void Serializer::pack(casadi_int e) {
       int64_t n = e;
       const char* c = reinterpret_cast<const char*>(&n);
       for (int j=0;j<8;++j) out.put(c[j]);
     }
 
-    void Serializer::unpack(int& e, std::istream& in) {
+    void DeSerializer::unpack(int& e) {
       int32_t n;
       char* c = reinterpret_cast<char*>(&n);
 
-      for (int j=0;j<8;++j) in >> c[j];
+      for (int j=0;j<4;++j) in.get(c[j]);
       e = n;
     }
 
-    void Serializer::pack(int e, std::ostream& out) {
+    void Serializer::pack(int e) {
       int32_t n = e;
       const char* c = reinterpret_cast<const char*>(&n);
-      for (int j=0;j<8;++j) out.put(c[j]);
+      for (int j=0;j<4;++j) out.put(c[j]);
     }
-    void Serializer::unpack(char& e, std::istream& in) {
+
+    void DeSerializer::unpack(char& e) {
       in >> e;
     }
 
-    void Serializer::pack(char e, std::ostream& out) {
+    void Serializer::pack(char e) {
       out.put(e);
     }
 
-    void Serializer::pack(const std::string& e, std::ostream& out) {
+    void Serializer::pack(const std::string& e) {
       int s = e.size();
-      pack(s, out);
+      pack(s);
       const char* c = e.c_str();
       for (int j=0;j<s;++j) out.put(c[j]);
     }
 
-    void Serializer::unpack(std::string& e, std::istream& in) {
+    void DeSerializer::unpack(std::string& e) {
       int s;
-      unpack(s, in);
+      unpack(s);
       e.resize(s);
-      for (int j=0;j<s;++j) in >> e[j];
+      for (int j=0;j<s;++j) in.get(e[j]);
     }
 
-    void Serializer::unpack(double& e, std::istream& in) {
+    void DeSerializer::unpack(double& e) {
       char* c = reinterpret_cast<char*>(&e);
-      for (int j=0;j<8;++j) in >> c[j];
+      for (int j=0;j<8;++j) in.get(c[j]);
     }
 
-    void Serializer::pack(double e, std::ostream& out) {
+    void Serializer::pack(double e) {
       const char* c = reinterpret_cast<const char*>(&e);
       for (int j=0;j<8;++j) out.put(c[j]);
     }
 
-
-    void Serializer::pack(const Dict& data, std::ostream& out) {
-      for (const auto & e : data) {
-        if (e.second.is_int()) {
-          casadi_int n = e.second.as_int();
-          out.put((n >> 24) & 0xFF);
-          out.put((n >> 16) & 0xFF);
-          out.put((n >>  8) & 0xFF);
-          out.put((n >>  0) & 0xFF);
-        }
-      }
-      out << data;
+    void Serializer::pack(const Sparsity& e) {
+      pack(e.compress());
     }
 
+    void DeSerializer::unpack(Sparsity& e) {
+      std::vector<casadi_int> i;
+      unpack(i);
+      e = Sparsity::compressed(i);
+    }
 
 } // namespace casadi

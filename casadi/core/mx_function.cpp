@@ -1637,6 +1637,7 @@ namespace casadi {
   }
 
   void MXFunction::serialize(Serializer &s) const {
+
   }
 
 } // namespace casadi

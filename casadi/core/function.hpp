@@ -36,7 +36,7 @@ namespace casadi {
   /** Forward declaration of internal class */
   class FunctionInternal;
   class Serializer;
-
+  class DeSerializer;
 #endif // SWIG
 
   /** \brief Function object
@@ -885,6 +885,9 @@ namespace casadi {
 
     /** \brief Build function from serialization */
     static Function deserialize(const std::string& s);
+
+    /** \brief Build function from serialization */
+    static Function deserialize(DeSerializer& s);
 
     /// Assert that an input dimension is equal so some given value
     void assert_size_in(casadi_int i, casadi_int nrow, casadi_int ncol) const;

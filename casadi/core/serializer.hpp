@@ -38,47 +38,71 @@ namespace casadi {
       \author Joris Gillis
       \date 2018
   */
+  class CASADI_EXPORT DeSerializer : public VectorCache {
+  public:
+
+    //DeSerializer(std::string &f_name);
+
+#ifndef SWIG
+    DeSerializer(std::istream &in_s);
+    void unpack(Sparsity& sp);
+    void unpack(int& e);
+    void unpack(casadi_int& e);
+    void unpack(std::string& e);
+    void unpack(double& e);
+    void unpack(char& e);
+    template <class T>
+    void unpack(std::vector<T>& e) {
+      casadi_int s;
+      unpack(s);
+      e.resize(s);
+      for (auto & i : e) unpack(i);
+    }
+#endif
+
+  private:
+    std::istream& in;
+
+  };
+
+
+
+  /** \brief Helper class for Serialization
+      \author Joris Gillis
+      \date 2018
+  */
   class CASADI_EXPORT Serializer : public VectorCache {
   public:
     /// Constructor
-    Serializer(const Dict& opts = Dict());
+
+#ifndef SWIG
+    Serializer(std::ostream& out, const Dict& opts = Dict());
+#endif
+    //Serializer(std::string& fname, const Dict& opts = Dict());
 
     /// Add a function
     casadi_int add(const Function& f);
 
-    void pack(const Dict& data, std::ostream& out);
-
-
 #ifndef SWIG
-    static void pack(int e, std::ostream& out);
-    static void pack(casadi_int e, std::ostream& out);
-    static void pack(double e, std::ostream& out);
-    static void pack(const std::string& e, std::ostream& out);
-    static void pack(char e, std::ostream& out);
+    void pack(const Sparsity& e);
+    void pack(int e);
+    void pack(casadi_int e);
+    void pack(double e);
+    void pack(const std::string& e);
+    void pack(char e);
     template <class T>
-    static void pack(const std::vector<T>& e, std::ostream& out) {
-      pack(casadi_int(e.size()), out);
-      for (const auto & i : e) pack(i, out);
+    void pack(const std::vector<T>& e) {
+      pack(casadi_int(e.size()));
+      for (const auto & i : e) pack(i);
     }
 
-    static void unpack(int& e, std::istream& in);
-    static void unpack(casadi_int& e, std::istream& in);
-    static void unpack(std::string& e, std::istream& in);
-    static void unpack(double& e, std::istream& in);
-    static void unpack(char& e, std::istream& in);
-    template <class T>
-    static void unpack(std::vector<T>& e, std::istream& in) {
-      casadi_int s;
-      unpack(s, in);
-      e.resize(s);
-      for (auto & i : e) unpack(i, in);
-    }
 
 #endif
 
   private:
     std::vector<Function> added_functions_;
 
+    std::ostream& out;
 
   };
 
