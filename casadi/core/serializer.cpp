@@ -69,7 +69,7 @@ namespace casadi {
     void DeSerializer::assert_decoration(char e) {
       char t;
       unpack(t);
-      casadi_assert_dev(t==e);
+      casadi_assert(t==e, "Serializer error '" + str(t) + "' vs '" + str(e) + "'.");
     }
 
     void DeSerializer::unpack(casadi_int& e) {

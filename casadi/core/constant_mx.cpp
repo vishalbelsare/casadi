@@ -27,6 +27,7 @@
 #include <vector>
 #include <algorithm>
 #include "casadi_misc.hpp"
+#include "serializer.hpp"
 
 using namespace std;
 
@@ -245,5 +246,20 @@ namespace casadi {
     casadi_assert_dev(sp.is_empty());
     return MX::zeros(sp);
   }
+
+  void ConstantMX::serialize_node(Serializer& s) const {
+    DM v = get_DM();
+    s.pack(v.nonzeros());
+  }
+
+  MX ConstantMX::deserialize(DeSerializer& s) {
+    MXNode::Info d = MXNode::deserialize_info(s);
+    std::vector<double> v;
+    s.unpack(v);
+    return DM(d.sp, v);
+  }
+
+  ///
+
 
 } // namespace casadi

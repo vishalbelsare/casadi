@@ -44,7 +44,7 @@ int main(){
 
     MX x = MX::sym("x");
     MX y = MX::sym("y",2);
-    Function f = Function("f",{x,y},{x+atan2(y,x)});
+    Function f = Function("f",{x,y},{exp(x)+atan2(y,x)});
 
     s.add(f);
   }

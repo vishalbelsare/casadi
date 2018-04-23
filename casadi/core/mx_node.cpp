@@ -52,6 +52,7 @@
 #include "einstein.hpp"
 #include "io_instruction.hpp"
 #include "symbolic_mx.hpp"
+#include "constant_mx.hpp"
 
 // Template implementations
 #include "setnonzeros_impl.hpp"
@@ -433,7 +434,7 @@ namespace casadi {
     if (casadi_math<MX>::is_binary(op)) {
       return BinaryMX<false, false>::deserialize(s);
     } else if (casadi_math<MX>::is_unary(op)) {
-      // pass
+      return UnaryMX::deserialize(s);
     }
 
     auto it = MXNode::deserialize_map.find(i);
@@ -988,6 +989,8 @@ namespace casadi {
     {OP_INPUT, Input::deserialize},
     {OP_OUTPUT, Output::deserialize},
     {OP_PARAMETER, SymbolicMX::deserialize},
+    {OP_CONST, ConstantMX::deserialize},
+    {OP_PROJECT, Project::deserialize},
   };
 
 
