@@ -120,6 +120,17 @@ namespace casadi {
     /** \brief Clear all memory (called from destructor) */
     void clear_mem();
 
+    struct Info  {
+      std::string name;
+      bool verbose;
+    };
+
+    explicit ProtoFunction(const Info& e) : name_(e.name), verbose_(e.verbose) {};
+
+    virtual void serialize(Serializer &s) const;
+
+    static Info deserialize(DeSerializer& s);
+
   protected:
     /// Name
     std::string name_;
@@ -475,7 +486,7 @@ namespace casadi {
     virtual void serialize(std::ostream &stream) const;
 
     /** \brief Serialize */
-    void serialize(Serializer &s) const;
+    void serialize(Serializer &s) const override;
 
     /** \brief Serialize */
     virtual void serialize_function(Serializer &s) const;
@@ -803,12 +814,15 @@ namespace casadi {
     symbolicAdjSeed(casadi_int nadj, const std::vector<MatType>& v) const;
 
     struct Info  {
-      std::string name;
+      ProtoFunction::Info proto;
       std::vector<Sparsity> sp_in;
       std::vector<Sparsity> sp_out;
       std::vector<std::string> name_in;
       std::vector<std::string> name_out;
     };
+
+    /** \brief Info Constructor */
+    FunctionInternal(const Info& e);
 
     static Info deserialize(DeSerializer& s);
 

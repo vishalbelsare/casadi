@@ -2870,8 +2870,13 @@ namespace casadi {
     casadi_assert(n>=0, "Print failure while processing '" + string(fmt) + "'");
   }
 
-  void FunctionInternal::serialize(Serializer& s) const {
+  void ProtoFunction::serialize(Serializer& s) const {
     s.pack(name_);
+    s.pack(verbose_);
+  }
+
+  void FunctionInternal::serialize(Serializer& s) const {
+    ProtoFunction::serialize(s);
     s.pack(sparsity_in_);
     s.pack(sparsity_out_);
     s.pack(name_in_);
@@ -2879,9 +2884,23 @@ namespace casadi {
     serialize_function(s);
   }
 
-  FunctionInternal::Info FunctionInternal::deserialize(DeSerializer& s) {
+  FunctionInternal::FunctionInternal(const Info& e) : ProtoFunction(e.proto),
+    sparsity_in_(e.sp_in), sparsity_out_(e.sp_out),
+    name_in_(e.name_in), name_out_(e.name_out) {
+
+  }
+
+
+  ProtoFunction::Info ProtoFunction::deserialize(DeSerializer& s) {
     Info ret;
     s.unpack(ret.name);
+    s.unpack(ret.verbose);
+    return ret;
+  }
+
+  FunctionInternal::Info FunctionInternal::deserialize(DeSerializer& s) {
+    Info ret;
+    ret.proto = ProtoFunction::deserialize(s);
     s.unpack(ret.sp_in);
     s.unpack(ret.sp_out);
     s.unpack(ret.name_in);

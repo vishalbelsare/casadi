@@ -48,6 +48,7 @@ namespace casadi {
     void unpack(Sparsity& e);
     void unpack(MX& e);
     void unpack(int& e);
+    void unpack(bool& e);
     void unpack(casadi_int& e);
     void unpack(std::string& e);
     void unpack(double& e);
@@ -95,6 +96,7 @@ namespace casadi {
     void pack(const Sparsity& e);
     void pack(const MX& e);
     void pack(int e);
+    void pack(bool e);
     void pack(casadi_int e);
     void pack(double e);
     void pack(const std::string& e);

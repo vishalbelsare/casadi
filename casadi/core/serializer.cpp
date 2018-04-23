@@ -100,6 +100,20 @@ namespace casadi {
       for (int j=0;j<4;++j) out.put(c[j]);
     }
 
+    void DeSerializer::unpack(bool& e) {
+      char t;
+      unpack(t);
+      casadi_assert_dev(t=='b');
+      char n;
+      in.get(n);
+      e = n;
+    }
+
+    void Serializer::pack(bool e) {
+      pack('b');
+      out.put(static_cast<char>(e));
+    }
+
     void DeSerializer::unpack(char& e) {
       in >> e;
     }

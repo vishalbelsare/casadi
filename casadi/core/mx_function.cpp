@@ -50,6 +50,12 @@ namespace casadi {
     XFunction<MXFunction, MX, MXNode>(name, inputv, outputv, name_in, name_out) {
   }
 
+  MXFunction::MXFunction(const Info& e) :
+    XFunction<MXFunction, MX, MXNode>(e.xfunction),
+    algorithm_(e.algorithm), workloc_(e.workloc), free_vars_(e.free_vars),
+    default_in_(e.default_in)  {
+  }
+
   MXFunction::~MXFunction() {
   }
 
@@ -1651,16 +1657,19 @@ namespace casadi {
     s.pack(free_vars_);
     s.pack(default_in_);
 
+    s.pack(in_);
+    s.pack(out_);
   }
 
   Function MXFunction::deserialize(DeSerializer& s) {
-    FunctionInternal::Info d = FunctionInternal::deserialize(s);
+    Info info;
+    info.xfunction.function = FunctionInternal::deserialize(s);
     casadi_int n_instructions;
     s.unpack(n_instructions);
     uout() << "n_instructions" << n_instructions << std::endl;
-    std::vector<AlgEl> alg(n_instructions);
+    info.algorithm.resize(n_instructions);
     for (casadi_int k=0;k<n_instructions;++k) {
-      AlgEl& e = alg[k];
+      AlgEl& e = info.algorithm[k];
       s.unpack(e.data);
       e.op = e.data.op();
       s.unpack(e.arg);
@@ -1668,14 +1677,16 @@ namespace casadi {
       uout() << "node" << e.data << std::endl;
     }
 
-    std::vector<casadi_int> workloc;
-    s.unpack(workloc);
-    std::vector<MX> free_vars;
-    s.unpack(free_vars);
-    std::vector<double> default_in;
-    s.unpack(default_in);
+    s.unpack(info.workloc);
+    s.unpack(info.free_vars);
+    s.unpack(info.default_in);
 
-    return Function();
+    s.unpack(info.xfunction.in);
+    s.unpack(info.xfunction.out);
+
+    Function ret;
+    ret.own(new MXFunction(info));
+    return ret;
   }
 
 } // namespace casadi
