@@ -63,6 +63,8 @@ namespace casadi {
       e.resize(s);
       for (auto & i : e) unpack(i);
     }
+
+    void assert_decoration(char e);
 #endif
 
   private:
@@ -107,6 +109,8 @@ namespace casadi {
       pack(casadi_int(e.size()));
       for (const auto & i : e) pack(i);
     }
+
+    void decorate(char e);
 
 
 #endif

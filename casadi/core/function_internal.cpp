@@ -2881,6 +2881,15 @@ namespace casadi {
     s.pack(sparsity_out_);
     s.pack(name_in_);
     s.pack(name_out_);
+    s.pack(casadi_int(sz_arg_per_));
+    s.pack(casadi_int(sz_res_per_));
+    s.pack(casadi_int(sz_iw_per_));
+    s.pack(casadi_int(sz_w_per_));
+    s.pack(casadi_int(sz_arg_tmp_));
+    s.pack(casadi_int(sz_res_tmp_));
+    s.pack(casadi_int(sz_iw_tmp_));
+    s.pack(casadi_int(sz_w_tmp_));
+
     serialize_function(s);
   }
 
@@ -2888,7 +2897,16 @@ namespace casadi {
     n_in_(e.sp_in.size()), n_out_(e.sp_out.size()),
     sparsity_in_(e.sp_in), sparsity_out_(e.sp_out),
     name_in_(e.name_in), name_out_(e.name_out),
-    eval_(nullptr) {
+    eval_(nullptr),
+
+    sz_arg_per_(e.sz_arg_per),
+    sz_res_per_(e.sz_res_per),
+    sz_iw_per_(e.sz_iw_per),
+    sz_w_per_(e.sz_w_per),
+    sz_arg_tmp_(e.sz_arg_tmp),
+    sz_res_tmp_(e.sz_res_tmp),
+    sz_iw_tmp_(e.sz_iw_tmp),
+    sz_w_tmp_(e.sz_w_tmp) {
 
   }
 
@@ -2907,6 +2925,16 @@ namespace casadi {
     s.unpack(ret.sp_out);
     s.unpack(ret.name_in);
     s.unpack(ret.name_out);
+
+    s.unpack(ret.sz_arg_per);
+    s.unpack(ret.sz_res_per);
+    s.unpack(ret.sz_iw_per);
+    s.unpack(ret.sz_w_per);
+    s.unpack(ret.sz_arg_tmp);
+    s.unpack(ret.sz_res_tmp);
+    s.unpack(ret.sz_iw_tmp);
+    s.unpack(ret.sz_w_tmp);
+
     return ret;
   }
 

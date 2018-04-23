@@ -819,6 +819,9 @@ namespace casadi {
       std::vector<Sparsity> sp_out;
       std::vector<std::string> name_in;
       std::vector<std::string> name_out;
+
+      casadi_int sz_arg_per, sz_res_per, sz_iw_per, sz_w_per;
+      casadi_int sz_arg_tmp, sz_res_tmp, sz_iw_tmp, sz_w_tmp;
     };
 
     /** \brief Info Constructor */
