@@ -31,6 +31,7 @@
 #include <sstream>
 #include "casadi_misc.hpp"
 #include "global_options.hpp"
+#include "serializer.hpp"
 
 using namespace std;
 
@@ -259,6 +260,24 @@ namespace casadi {
 
     // Fallback to default implementation
     return MXNode::_get_binary(op, y, scX, scY);
+  }
+
+  template<bool ScX, bool ScY>
+  void BinaryMX<ScX, ScY>::serialize_node(Serializer& s) const {
+    char type_x = ScX;
+    char type_y = ScY;
+    char type = type_x | (type_y >> 1);
+    s.pack(type);
+  }
+
+  template<bool ScX, bool ScY>
+  MX BinaryMX<ScX, ScY>::deserialize(DeSerializer& s) {
+    MXNode::Info d = MXNode::deserialize(s);
+    char t;
+    s.unpack(t);
+    bool scX = t & 1;
+    bool scY = t & 2;
+    return d.deps[0]->MXNode::_get_binary(d.op, d.deps[1], scX, scY);
   }
 
 

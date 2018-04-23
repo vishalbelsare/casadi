@@ -475,7 +475,10 @@ namespace casadi {
     virtual void serialize(std::ostream &stream) const;
 
     /** \brief Serialize */
-    virtual void serialize(Serializer &s) const;
+    void serialize(Serializer &s) const;
+
+    /** \brief Serialize */
+    virtual void serialize_function(Serializer &s) const;
 
     /** \brief Serialize function header */
     void serialize_header(std::ostream &stream) const;
@@ -798,6 +801,18 @@ namespace casadi {
     template<typename MatType>
     std::vector<std::vector<MatType> >
     symbolicAdjSeed(casadi_int nadj, const std::vector<MatType>& v) const;
+
+    struct Info  {
+      std::string name;
+      std::vector<Sparsity> sp_in;
+      std::vector<Sparsity> sp_out;
+      std::vector<std::string> name_in;
+      std::vector<std::string> name_out;
+    };
+
+    static Info deserialize(DeSerializer& s);
+
+    static std::map<std::string, Function (*)(DeSerializer&)> deserialize_map;
 
   protected:
     /** \brief Populate jac_sparsity_ and jac_sparsity_compact_ during initialization */

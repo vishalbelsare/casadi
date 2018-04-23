@@ -45,7 +45,8 @@ namespace casadi {
 
 #ifndef SWIG
     DeSerializer(std::istream &in_s);
-    void unpack(Sparsity& sp);
+    void unpack(Sparsity& e);
+    void unpack(MX& e);
     void unpack(int& e);
     void unpack(casadi_int& e);
     void unpack(std::string& e);
@@ -53,6 +54,9 @@ namespace casadi {
     void unpack(char& e);
     template <class T>
     void unpack(std::vector<T>& e) {
+      char t;
+      unpack(t);
+      casadi_assert_dev(t=='V');
       casadi_int s;
       unpack(s);
       e.resize(s);
@@ -62,12 +66,16 @@ namespace casadi {
 
   private:
     std::istream& in;
+    std::vector<MX> nodes;
 
   };
 
 
 
   /** \brief Helper class for Serialization
+
+      public API should not allow progressive adding of Functions
+
       \author Joris Gillis
       \date 2018
   */
@@ -85,6 +93,7 @@ namespace casadi {
 
 #ifndef SWIG
     void pack(const Sparsity& e);
+    void pack(const MX& e);
     void pack(int e);
     void pack(casadi_int e);
     void pack(double e);
@@ -92,6 +101,7 @@ namespace casadi {
     void pack(char e);
     template <class T>
     void pack(const std::vector<T>& e) {
+      pack('V');
       pack(casadi_int(e.size()));
       for (const auto & i : e) pack(i);
     }
@@ -101,6 +111,8 @@ namespace casadi {
 
   private:
     std::vector<Function> added_functions_;
+
+    std::map<MXNode*, casadi_int> MX_nodes_;
 
     std::ostream& out;
 

@@ -24,6 +24,7 @@
 
 
 #include "io_instruction.hpp"
+#include "serializer.hpp"
 
 using namespace std;
 
@@ -91,5 +92,34 @@ namespace casadi {
     return ret;
   }
 
+  void IOInstruction::serialize_node(Serializer& s) const {
+    s.pack(ind_);
+    s.pack(segment_);
+    s.pack(offset_);
+  }
+
+  MX Input::deserialize(DeSerializer& s) {
+    MXNode::Info d = MXNode::deserialize(s);
+
+    casadi_int ind, segment, offset;
+    s.unpack(ind);
+    s.unpack(segment);
+    s.unpack(offset);
+    MX r;
+    r.own(new Input(d.sp, ind, segment, offset));
+    return r;
+  }
+
+  MX Output::deserialize(DeSerializer& s) {
+    MXNode::Info d = MXNode::deserialize(s);
+
+    casadi_int ind, segment, offset;
+    s.unpack(ind);
+    s.unpack(segment);
+    s.unpack(offset);
+    MX r;
+    r.own(new Output(d.deps[0], ind, segment, offset));
+    return r;
+  }
 
 } // namespace casadi

@@ -50,11 +50,15 @@
 #include "repmat.hpp"
 #include "casadi_find.hpp"
 #include "einstein.hpp"
+#include "io_instruction.hpp"
+#include "symbolic_mx.hpp"
 
 // Template implementations
 #include "setnonzeros_impl.hpp"
 #include "solve_impl.hpp"
 #include "binary_mx_impl.hpp"
+
+#include "serializer.hpp"
 
 #include <typeinfo>
 
@@ -400,6 +404,25 @@ namespace casadi {
 
   Dict MXNode::info() const {
     return Dict();
+  }
+
+  void MXNode::serialize_node(Serializer& s) const {
+    casadi_error("'serialize_node' not defined for class " + class_name());
+  }
+
+  void MXNode::serialize(Serializer& s) const {
+    s.pack(op());
+    s.pack(dep_);
+    s.pack(sparsity_);
+    serialize_node(s);
+  }
+
+  MXNode::Info MXNode::deserialize(DeSerializer& s) {
+    Info ret;
+    s.unpack(ret.op);
+    s.unpack(ret.deps);
+    s.unpack(ret.sp);
+    return ret;
   }
 
   MX MXNode::get_mac(const MX& y, const MX& z) const {
@@ -939,5 +962,16 @@ namespace casadi {
       return false;
     }
   }
+
+  std::map<casadi_int, MX (*)(DeSerializer&)> MXNode::deserialize_map = {
+    {OP_INPUT, Input::deserialize},
+    {OP_OUTPUT, Output::deserialize},
+    {OP_PARAMETER, SymbolicMX::deserialize},
+    {OP_ADD, BinaryMX<false, false>::deserialize},
+    {OP_SUB, BinaryMX<false, false>::deserialize},
+    {OP_MUL, BinaryMX<false, false>::deserialize},
+    {OP_DIV, BinaryMX<false, false>::deserialize},
+  };
+
 
 } // namespace casadi

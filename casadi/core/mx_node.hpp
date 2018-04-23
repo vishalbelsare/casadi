@@ -36,6 +36,10 @@
 #include <stack>
 
 namespace casadi {
+
+  class Serializer;
+  class DeSerializer;
+
   /** \brief Node class for MX objects
       \author Joel Andersson
       \date 2010
@@ -173,6 +177,18 @@ namespace casadi {
 
     /** Obtain information about node */
     virtual Dict info() const;
+
+    void serialize(Serializer& s) const;
+
+    virtual void serialize_node(Serializer& s) const;
+
+    struct Info  {
+      Sparsity sp;
+      std::vector<MX> deps;
+      casadi_int op;
+    };
+
+    static Info deserialize(DeSerializer& s);
 
     /** \brief Check if two nodes are equivalent up to a given depth */
     static bool is_equal(const MXNode* x, const MXNode* y, casadi_int depth);
@@ -416,6 +432,8 @@ namespace casadi {
 
     /** \brief Propagate sparsities backwards through a copy operation */
     static void copy_rev(bvec_t* arg, bvec_t* res, casadi_int len);
+
+    static std::map<casadi_int, MX (*)(DeSerializer&)> deserialize_map;
   };
 
   /// \endcond

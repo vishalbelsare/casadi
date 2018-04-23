@@ -123,7 +123,10 @@ namespace casadi {
     void codegen_body(CodeGenerator& g) const override;
 
     /** \brief Serialize */
-    void serialize(Serializer &s) const override;
+    void serialize_function(Serializer &s) const override;
+
+    /** \brief Deserialize into MX */
+    static Function deserialize(DeSerializer& s);
 
     /** \brief Extract the residual function G and the modified function Z out of an expression
      * (see Albersmeyer2010 paper) */

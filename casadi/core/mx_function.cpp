@@ -28,6 +28,7 @@
 #include "global_options.hpp"
 #include "casadi_interrupt.hpp"
 #include "io_instruction.hpp"
+#include "serializer.hpp"
 
 #include <stack>
 #include <typeinfo>
@@ -1636,8 +1637,45 @@ namespace casadi {
     return dep.stats(1);
   }
 
-  void MXFunction::serialize(Serializer &s) const {
+  void MXFunction::serialize_function(Serializer &s) const {
+    s.pack(casadi_int(algorithm_.size()));
 
+    // Loop over algorithm
+    for (const auto& e : algorithm_) {
+      s.pack(e.data);
+      s.pack(e.arg);
+      s.pack(e.res);
+    }
+
+    s.pack(workloc_);
+    s.pack(free_vars_);
+    s.pack(default_in_);
+
+  }
+
+  Function MXFunction::deserialize(DeSerializer& s) {
+    FunctionInternal::Info d = FunctionInternal::deserialize(s);
+    casadi_int n_instructions;
+    s.unpack(n_instructions);
+    uout() << "n_instructions" << n_instructions << std::endl;
+    std::vector<AlgEl> alg(n_instructions);
+    for (casadi_int k=0;k<n_instructions;++k) {
+      AlgEl& e = alg[k];
+      s.unpack(e.data);
+      e.op = e.data.op();
+      s.unpack(e.arg);
+      s.unpack(e.res);
+      uout() << "node" << e.data << std::endl;
+    }
+
+    std::vector<casadi_int> workloc;
+    s.unpack(workloc);
+    std::vector<MX> free_vars;
+    s.unpack(free_vars);
+    std::vector<double> default_in;
+    s.unpack(default_in);
+
+    return Function();
   }
 
 } // namespace casadi

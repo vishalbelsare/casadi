@@ -29,6 +29,8 @@
 #include "global_options.hpp"
 #include "external.hpp"
 #include "finite_differences.hpp"
+#include "serializer.hpp"
+#include "mx_function.hpp"
 
 #include <typeinfo>
 #include <cctype>
@@ -1540,8 +1542,8 @@ namespace casadi {
     casadi_error("'serialize' not defined for " + class_name());
   }
 
-  void FunctionInternal::serialize(Serializer&s) const {
-    casadi_error("'serialize' not defined for " + class_name());
+  void FunctionInternal::serialize_function(Serializer&s) const {
+    casadi_error("'serialize_function' not defined for " + class_name());
   }
 
   void assert_read(std::istream &stream, const std::string& s) {
@@ -2867,5 +2869,28 @@ namespace casadi {
     // Throw error if failure
     casadi_assert(n>=0, "Print failure while processing '" + string(fmt) + "'");
   }
+
+  void FunctionInternal::serialize(Serializer& s) const {
+    s.pack(name_);
+    s.pack(sparsity_in_);
+    s.pack(sparsity_out_);
+    s.pack(name_in_);
+    s.pack(name_out_);
+    serialize_function(s);
+  }
+
+  FunctionInternal::Info FunctionInternal::deserialize(DeSerializer& s) {
+    Info ret;
+    s.unpack(ret.name);
+    s.unpack(ret.sp_in);
+    s.unpack(ret.sp_out);
+    s.unpack(ret.name_in);
+    s.unpack(ret.name_out);
+    return ret;
+  }
+
+  std::map<std::string, Function (*)(DeSerializer&)> FunctionInternal::deserialize_map = {
+    {"MXFunction", MXFunction::deserialize}
+  };
 
 } // namespace casadi
