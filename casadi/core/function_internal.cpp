@@ -2885,8 +2885,10 @@ namespace casadi {
   }
 
   FunctionInternal::FunctionInternal(const Info& e) : ProtoFunction(e.proto),
+    n_in_(e.sp_in.size()), n_out_(e.sp_out.size()),
     sparsity_in_(e.sp_in), sparsity_out_(e.sp_out),
-    name_in_(e.name_in), name_out_(e.name_out) {
+    name_in_(e.name_in), name_out_(e.name_out),
+    eval_(nullptr) {
 
   }
 

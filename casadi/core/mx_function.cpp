@@ -1686,6 +1686,7 @@ namespace casadi {
 
     Function ret;
     ret.own(new MXFunction(info));
+    ret.checkout();
     return ret;
   }
 

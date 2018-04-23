@@ -54,7 +54,13 @@ int main(){
     std::ifstream in("test.dat", ios::binary);
     DeSerializer s(in);
 
-    Function::deserialize(s);
+    Function a = Function::deserialize(s);
+
+    a.disp(uout(), true);
+
+    uout() << std::endl;
+
+    std::cout << a(std::vector<DM>{1 , std::vector<double>{2, 3}}) << std::endl;
   }
 
   return 0;
