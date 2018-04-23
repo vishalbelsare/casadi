@@ -95,7 +95,7 @@ namespace casadi {
   }
 
   MX SymbolicMX::deserialize(DeSerializer& s) {
-    MXNode::Info d = MXNode::deserialize(s);
+    MXNode::Info d = MXNode::deserialize_info(s);
     std::string name;
     s.unpack(name);
     return MX::sym(name, d.sp);

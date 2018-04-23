@@ -2908,19 +2908,21 @@ namespace casadi {
     sz_iw_tmp_(e.sz_iw_tmp),
     sz_w_tmp_(e.sz_w_tmp) {
 
+      jit_ = false;
+
   }
 
 
-  ProtoFunction::Info ProtoFunction::deserialize(DeSerializer& s) {
+  ProtoFunction::Info ProtoFunction::deserialize_info(DeSerializer& s) {
     Info ret;
     s.unpack(ret.name);
     s.unpack(ret.verbose);
     return ret;
   }
 
-  FunctionInternal::Info FunctionInternal::deserialize(DeSerializer& s) {
+  FunctionInternal::Info FunctionInternal::deserialize_info(DeSerializer& s) {
     Info ret;
-    ret.proto = ProtoFunction::deserialize(s);
+    ret.proto = ProtoFunction::deserialize_info(s);
     s.unpack(ret.sp_in);
     s.unpack(ret.sp_out);
     s.unpack(ret.name_in);

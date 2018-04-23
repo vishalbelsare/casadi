@@ -177,9 +177,10 @@ namespace casadi {
       auto it = MX_nodes_.find(e.get());
       if (it==MX_nodes_.end()) {
         // Not found
-        MX_nodes_[e.get()] = MX_nodes_.size();
         pack('d'); // definition
         e.serialize(*this);
+        casadi_int r = MX_nodes_.size();
+        MX_nodes_[e.get()] = r;
       } else {
         pack('r'); // reference
         pack(it->second);

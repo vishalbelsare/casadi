@@ -266,13 +266,13 @@ namespace casadi {
   void BinaryMX<ScX, ScY>::serialize_node(Serializer& s) const {
     char type_x = ScX;
     char type_y = ScY;
-    char type = type_x | (type_y >> 1);
+    char type = type_x | (type_y << 1);
     s.pack(type);
   }
 
   template<bool ScX, bool ScY>
   MX BinaryMX<ScX, ScY>::deserialize(DeSerializer& s) {
-    MXNode::Info d = MXNode::deserialize(s);
+    MXNode::Info d = MXNode::deserialize_info(s);
     char t;
     s.unpack(t);
     bool scX = t & 1;

@@ -188,7 +188,8 @@ namespace casadi {
       casadi_int op;
     };
 
-    static Info deserialize(DeSerializer& s);
+    static Info deserialize_info(DeSerializer& s);
+    static MX deserialize(DeSerializer& s);
 
     /** \brief Check if two nodes are equivalent up to a given depth */
     static bool is_equal(const MXNode* x, const MXNode* y, casadi_int depth);

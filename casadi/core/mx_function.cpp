@@ -1663,7 +1663,7 @@ namespace casadi {
 
   Function MXFunction::deserialize(DeSerializer& s) {
     Info info;
-    info.xfunction.function = FunctionInternal::deserialize(s);
+    info.xfunction.function = FunctionInternal::deserialize_info(s);
     casadi_int n_instructions;
     s.unpack(n_instructions);
     info.algorithm.resize(n_instructions);

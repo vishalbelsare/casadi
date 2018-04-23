@@ -745,6 +745,7 @@ namespace casadi {
   }
 
   void MX::serialize(Serializer& s) const {
+    // TODO(jgillis): move to MXNode
     casadi_int i = op();
     casadi_assert_dev(i<255 && i>=0);
     s.pack(static_cast<char>(i));
@@ -752,15 +753,7 @@ namespace casadi {
   }
 
   MX MX::deserialize(DeSerializer& s) {
-    char i;
-    s.unpack(i);
-    uout() << "i" << int(i) << std::endl;
-    auto it = MXNode::deserialize_map.find(i);
-    if (it==MXNode::deserialize_map.end()) {
-      casadi_error("Not implemented op " + str(casadi_int(i)));
-    } else {
-      return it->second(s);
-    }
+    return MXNode::deserialize(s);
   }
 
   bool MX::is_equal(const MX& x, const MX& y, casadi_int depth) {

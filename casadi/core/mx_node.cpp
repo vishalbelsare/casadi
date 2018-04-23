@@ -417,13 +417,33 @@ namespace casadi {
     serialize_node(s);
   }
 
-  MXNode::Info MXNode::deserialize(DeSerializer& s) {
+  MXNode::Info MXNode::deserialize_info(DeSerializer& s) {
     Info ret;
     s.unpack(ret.op);
     s.unpack(ret.deps);
     s.unpack(ret.sp);
     return ret;
   }
+
+  MX MXNode::deserialize(DeSerializer& s) {
+    char i;
+    s.unpack(i);
+    unsigned char op = i;
+
+    if (casadi_math<MX>::is_binary(op)) {
+      return BinaryMX<false, false>::deserialize(s);
+    } else if (casadi_math<MX>::is_unary(op)) {
+      // pass
+    }
+
+    auto it = MXNode::deserialize_map.find(i);
+    if (it==MXNode::deserialize_map.end()) {
+      casadi_error("Not implemented op " + str(casadi_int(i)));
+    } else {
+      return it->second(s);
+    }
+  }
+
 
   MX MXNode::get_mac(const MX& y, const MX& z) const {
     // Get reference to transposed first argument
@@ -963,14 +983,11 @@ namespace casadi {
     }
   }
 
+  // Note: binary/unary operations are ommitted here
   std::map<casadi_int, MX (*)(DeSerializer&)> MXNode::deserialize_map = {
     {OP_INPUT, Input::deserialize},
     {OP_OUTPUT, Output::deserialize},
     {OP_PARAMETER, SymbolicMX::deserialize},
-    {OP_ADD, BinaryMX<false, false>::deserialize},
-    {OP_SUB, BinaryMX<false, false>::deserialize},
-    {OP_MUL, BinaryMX<false, false>::deserialize},
-    {OP_DIV, BinaryMX<false, false>::deserialize},
   };
 
 
