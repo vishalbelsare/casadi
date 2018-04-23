@@ -82,7 +82,6 @@ namespace casadi {
     }
 
     void DeSerializer::unpack(int& e) {
-      uout() << "int" << std::endl;
       char t;
       unpack(t);
       casadi_assert_dev(t=='i');
@@ -142,7 +141,6 @@ namespace casadi {
     }
 
     void DeSerializer::unpack(double& e) {
-      uout() << "double" << std::endl;
       char t;
       unpack(t);
       casadi_assert_dev(t=='d');
@@ -169,7 +167,6 @@ namespace casadi {
       char t;
       unpack(t);
       casadi_assert_dev(t=='S');
-      uout() << "Sparsity" << std::endl;
       std::vector<casadi_int> i;
       unpack(i);
       if (i.size()==0) {
@@ -194,7 +191,6 @@ namespace casadi {
     }
 
     void DeSerializer::unpack(MX& e) {
-      uout() << "MX" << std::endl;
       char t;
       unpack(t);
       casadi_assert_dev(t=='X');

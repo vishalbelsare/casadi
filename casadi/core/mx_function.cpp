@@ -1666,7 +1666,6 @@ namespace casadi {
     info.xfunction.function = FunctionInternal::deserialize(s);
     casadi_int n_instructions;
     s.unpack(n_instructions);
-    uout() << "n_instructions" << n_instructions << std::endl;
     info.algorithm.resize(n_instructions);
     for (casadi_int k=0;k<n_instructions;++k) {
       AlgEl& e = info.algorithm[k];
@@ -1674,7 +1673,6 @@ namespace casadi {
       e.op = e.data.op();
       s.unpack(e.arg);
       s.unpack(e.res);
-      uout() << "node" << e.data << std::endl;
     }
 
     s.unpack(info.workloc);
