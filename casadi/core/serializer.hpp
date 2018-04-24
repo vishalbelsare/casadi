@@ -43,10 +43,10 @@ namespace casadi {
 
     //DeSerializer(std::string &f_name);
 
-#ifndef SWIG
     DeSerializer(std::istream &in_s);
     void unpack(Sparsity& e);
     void unpack(MX& e);
+    void unpack(Function& e);
     void unpack(int& e);
     void unpack(bool& e);
     void unpack(casadi_int& e);
@@ -98,11 +98,12 @@ namespace casadi {
     }
 
     void assert_decoration(char e);
-#endif
+
 
   private:
     std::istream& in;
     std::vector<MX> nodes;
+    std::vector<Function> functions;
 
   };
 
@@ -127,9 +128,9 @@ namespace casadi {
     /// Add a function
     casadi_int add(const Function& f);
 
-#ifndef SWIG
     void pack(const Sparsity& e);
     void pack(const MX& e);
+    void pack(const Function& e);
     void pack(int e);
     void pack(bool e);
     void pack(casadi_int e);
@@ -168,12 +169,12 @@ namespace casadi {
       }
     }
 
-#endif
 
   private:
     std::vector<Function> added_functions_;
 
     std::map<MXNode*, casadi_int> MX_nodes_;
+    std::map<FunctionInternal*, casadi_int> functions_;
 
     std::ostream& out;
 

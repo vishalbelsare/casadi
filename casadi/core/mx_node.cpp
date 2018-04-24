@@ -412,9 +412,10 @@ namespace casadi {
   }
 
   void MXNode::serialize(Serializer& s) const {
-    casadi_int i = op();
-    casadi_assert_dev(i<255 && i>=0);
-    s.pack("MXNode::op", static_cast<char>(i));
+    //casadi_int i = op();
+    //uout() << i << std::endl;
+    //casadi_assert_dev(i<255 && i>=0);
+    s.pack("MXNode::op", op());
     s.pack("MXNode::op2", op());
     s.pack("MXNode::deps", dep_);
     s.pack("MXNode::sp", sparsity_);
@@ -428,9 +429,12 @@ namespace casadi {
   }
 
   MX MXNode::deserialize(DeSerializer& s) {
-    char i;
-    s.unpack("MXNode::op", i);
-    unsigned char op = i;
+    //char i;
+    //s.unpack("MXNode::op", i);
+    //unsigned char op = i;
+
+    casadi_int op;
+    s.unpack("MXNode::op", op);
 
     if (casadi_math<MX>::is_binary(op)) {
       return BinaryMX<false, false>::deserialize(s);
@@ -438,9 +442,9 @@ namespace casadi {
       return UnaryMX::deserialize(s);
     }
 
-    auto it = MXNode::deserialize_map.find(i);
+    auto it = MXNode::deserialize_map.find(op);
     if (it==MXNode::deserialize_map.end()) {
-      casadi_error("Not implemented op " + str(casadi_int(i)));
+      casadi_error("Not implemented op " + str(casadi_int(op)));
     } else {
       return it->second(s);
     }
@@ -992,6 +996,8 @@ namespace casadi {
     {OP_PARAMETER, SymbolicMX::deserialize},
     {OP_CONST, ConstantMX::deserialize},
     {OP_PROJECT, Project::deserialize},
+    {OP_CALL, Call::deserialize},
+    {-1, OutputNode::deserialize}
   };
 
 

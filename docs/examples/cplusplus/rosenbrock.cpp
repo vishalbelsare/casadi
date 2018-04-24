@@ -46,10 +46,17 @@ int main(){
 
     MX x = MX::sym("x");
     MX y = MX::sym("y",2);
-    MX z = sin(2*x)*atan2(3*y,x)+1;
+
+    MX w = atan2(3*y,x);
+    MX z = sin(2*x)*w+1;
     uout() << "z" << z << std::endl;
-    f = Function("f",{x,y},{z});
+    Function g = Function("g",{x,y},{w-x});
+
+    MX q = g(std::vector<MX>{2*x,z})[0];
+
+    f = Function("f",{x,y},{q+1});
     f.disp(uout(), true);
+
 
     s.add(f);
   }

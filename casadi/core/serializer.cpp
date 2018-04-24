@@ -182,4 +182,14 @@ namespace casadi {
       shared_unpack(e, nodes);
     }
 
+    void Serializer::pack(const Function& e) {
+      decorate('X');
+      shared_pack(e, functions_);
+    }
+
+    void DeSerializer::unpack(Function& e) {
+      assert_decoration('X');
+      shared_unpack(e, functions);
+    }
+
 } // namespace casadi
