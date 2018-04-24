@@ -129,7 +129,7 @@ namespace casadi {
 
     virtual void serialize(Serializer &s) const;
 
-    static Info deserialize_info(DeSerializer& s);
+    static void deserialize(DeSerializer& s, Info& e);
 
   protected:
     /// Name
@@ -827,7 +827,7 @@ namespace casadi {
     /** \brief Info Constructor */
     FunctionInternal(const Info& e);
 
-    static Info deserialize_info(DeSerializer& s);
+    static void deserialize(DeSerializer& s, Info& e);
 
     static std::map<std::string, Function (*)(DeSerializer&)> deserialize_map;
 

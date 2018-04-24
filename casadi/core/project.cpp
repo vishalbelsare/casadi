@@ -101,7 +101,8 @@ namespace casadi {
   }
 
   MX Project::deserialize(DeSerializer& s) {
-    MXNode::Info d = MXNode::deserialize_info(s);
+    MXNode::Info d;
+    MXNode::deserialize(s, d);
     return MX::create(new Project(d.deps[0], d.sp));
   }
 

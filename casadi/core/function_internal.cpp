@@ -2875,11 +2875,9 @@ namespace casadi {
     s.pack(verbose_);
   }
 
-  ProtoFunction::Info ProtoFunction::deserialize_info(DeSerializer& s) {
-    Info ret;
-    s.unpack(ret.name);
-    s.unpack(ret.verbose);
-    return ret;
+  void ProtoFunction::deserialize(DeSerializer& s, Info& e) {
+    s.unpack(e.name);
+    s.unpack(e.verbose);
   }
 
   void FunctionInternal::serialize(Serializer& s) const {
@@ -2900,24 +2898,21 @@ namespace casadi {
     serialize_function(s);
   }
 
-  FunctionInternal::Info FunctionInternal::deserialize_info(DeSerializer& s) {
-    Info ret;
-    ret.proto = ProtoFunction::deserialize_info(s);
-    s.unpack(ret.sp_in);
-    s.unpack(ret.sp_out);
-    s.unpack(ret.name_in);
-    s.unpack(ret.name_out);
+  void FunctionInternal::deserialize(DeSerializer& s, Info& e) {
+    ProtoFunction::deserialize(s, e.proto);
+    s.unpack(e.sp_in);
+    s.unpack(e.sp_out);
+    s.unpack(e.name_in);
+    s.unpack(e.name_out);
 
-    s.unpack(ret.sz_arg_per);
-    s.unpack(ret.sz_res_per);
-    s.unpack(ret.sz_iw_per);
-    s.unpack(ret.sz_w_per);
-    s.unpack(ret.sz_arg_tmp);
-    s.unpack(ret.sz_res_tmp);
-    s.unpack(ret.sz_iw_tmp);
-    s.unpack(ret.sz_w_tmp);
-
-    return ret;
+    s.unpack(e.sz_arg_per);
+    s.unpack(e.sz_res_per);
+    s.unpack(e.sz_iw_per);
+    s.unpack(e.sz_w_per);
+    s.unpack(e.sz_arg_tmp);
+    s.unpack(e.sz_res_tmp);
+    s.unpack(e.sz_iw_tmp);
+    s.unpack(e.sz_w_tmp);
   }
 
   FunctionInternal::FunctionInternal(const Info& e) : ProtoFunction(e.proto),

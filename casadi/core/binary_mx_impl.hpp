@@ -272,7 +272,8 @@ namespace casadi {
 
   template<bool ScX, bool ScY>
   MX BinaryMX<ScX, ScY>::deserialize(DeSerializer& s) {
-    MXNode::Info d = MXNode::deserialize_info(s);
+    MXNode::Info d;
+    MXNode::deserialize(s, d);
     char t;
     s.unpack("BinaryMX::scalar_flags", t);
     bool scX = t & 1;

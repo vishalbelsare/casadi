@@ -194,7 +194,8 @@ namespace casadi {
   }
 
   MX UnaryMX::deserialize(DeSerializer& s) {
-    MXNode::Info d = MXNode::deserialize_info(s);
+    MXNode::Info d;
+    MXNode::deserialize(s, d);
     return d.deps[0]->MXNode::get_unary(d.op);
   }
 

@@ -421,12 +421,10 @@ namespace casadi {
     serialize_node(s);
   }
 
-  MXNode::Info MXNode::deserialize_info(DeSerializer& s) {
-    Info ret;
-    s.unpack("MXNode::op2", ret.op);
-    s.unpack("MXNode::deps", ret.deps);
-    s.unpack("MXNode::sp", ret.sp);
-    return ret;
+  void MXNode::deserialize(DeSerializer& s, Info& e) {
+    s.unpack("MXNode::op2", e.op);
+    s.unpack("MXNode::deps", e.deps);
+    s.unpack("MXNode::sp", e.sp);
   }
 
   MX MXNode::deserialize(DeSerializer& s) {

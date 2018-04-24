@@ -99,7 +99,8 @@ namespace casadi {
   }
 
   MX Input::deserialize(DeSerializer& s) {
-    MXNode::Info d = MXNode::deserialize_info(s);
+    MXNode::Info d;
+    MXNode::deserialize(s, d);
 
     casadi_int ind, segment, offset;
     s.unpack("IOInstruction::ind", ind);
@@ -111,7 +112,8 @@ namespace casadi {
   }
 
   MX Output::deserialize(DeSerializer& s) {
-    MXNode::Info d = MXNode::deserialize_info(s);
+    MXNode::Info d;
+    MXNode::deserialize(s, d);
 
     casadi_int ind, segment, offset;
     s.unpack("IOInstruction::ind", ind);

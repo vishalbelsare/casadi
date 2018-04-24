@@ -253,7 +253,8 @@ namespace casadi {
   }
 
   MX ConstantMX::deserialize(DeSerializer& s) {
-    MXNode::Info d = MXNode::deserialize_info(s);
+    MXNode::Info d;
+    MXNode::deserialize(s, d);
     std::vector<double> v;
     s.unpack("ConstantMX::nonzeros", v);
     return DM(d.sp, v);
