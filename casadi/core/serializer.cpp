@@ -174,39 +174,12 @@ namespace casadi {
 
     void Serializer::pack(const MX& e) {
       decorate('X');
-      auto it = MX_nodes_.find(e.get());
-      if (it==MX_nodes_.end()) {
-        // Not found
-        pack("MXflag", 'd'); // definition
-        e.serialize(*this);
-        casadi_int r = MX_nodes_.size();
-        MX_nodes_[e.get()] = r;
-      } else {
-        pack("MXflag", 'r'); // reference
-        pack("MXreference", it->second);
-      }
+      shared_pack(e, MX_nodes_);
     }
 
     void DeSerializer::unpack(MX& e) {
       assert_decoration('X');
-
-      char i;
-      unpack("MXflag", i);
-      switch (i) {
-        case 'd': // definition
-          e = MX::deserialize(*this);
-          nodes.push_back(e);
-          break;
-        case 'r': // reference
-          {
-            casadi_int k;
-            unpack("MXreference", k);
-            e = nodes.at(k);
-          }
-          break;
-        default:
-          casadi_assert_dev(false);
-      }
+      shared_unpack(e, nodes);
     }
 
 } // namespace casadi

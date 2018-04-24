@@ -75,6 +75,28 @@ namespace casadi {
       uout() << "unpack: " << descr << ": " << e << std::endl;
     }
 
+
+    template <class T, class M>
+    void shared_unpack(T& e, M& cache) {
+      char i;
+      unpack(T::type_name() + "::flag", i);
+      switch (i) {
+        case 'd': // definition
+          e = T::deserialize(*this);
+          cache.push_back(e);
+          break;
+        case 'r': // reference
+          {
+            casadi_int k;
+            unpack(T::type_name() + "::reference", k);
+            e = cache.at(k);
+          }
+          break;
+        default:
+          casadi_assert_dev(false);
+      }
+    }
+
     void assert_decoration(char e);
 #endif
 
@@ -131,6 +153,20 @@ namespace casadi {
 
     void decorate(char e);
 
+    template <class T, class M>
+    void shared_pack(const T& e, M& map) {
+      auto it = map.find(e.get());
+      if (it==map.end()) {
+        // Not found
+        pack(T::type_name() + "::flag", 'd'); // definition
+        e.serialize(*this);
+        casadi_int r = map.size();
+        map[e.get()] = r;
+      } else {
+        pack(T::type_name() + "::flag", 'r'); // reference
+        pack(T::type_name() + "::reference", it->second);
+      }
+    }
 
 #endif
 
