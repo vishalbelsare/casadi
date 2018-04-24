@@ -44,7 +44,10 @@ int main(){
 
     MX x = MX::sym("x");
     MX y = MX::sym("y",2);
-    Function f = Function("f",{x,y},{exp(x)+atan2(y,x)});
+    MX z = sqrt(x)*atan2(y,x)+1;
+    uout() << "z" << z << std::endl;
+    Function f = Function("f",{x,y},{z});
+    f.disp(uout(), true);
 
     s.add(f);
   }

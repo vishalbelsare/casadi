@@ -745,10 +745,6 @@ namespace casadi {
   }
 
   void MX::serialize(Serializer& s) const {
-    // TODO(jgillis): move to MXNode
-    casadi_int i = op();
-    casadi_assert_dev(i<255 && i>=0);
-    s.pack(static_cast<char>(i));
     return (*this)->serialize(s);
   }
 

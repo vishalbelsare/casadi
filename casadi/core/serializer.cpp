@@ -69,11 +69,11 @@ namespace casadi {
     void DeSerializer::assert_decoration(char e) {
       char t;
       unpack(t);
-      casadi_assert(t==e, "Serializer error '" + str(t) + "' vs '" + str(e) + "'.");
+      casadi_assert(t==e, "Serializer error '" + str(e) + "' vs '" + str(t) + "'.");
     }
 
     void DeSerializer::unpack(casadi_int& e) {
-      assert_decoration('I');
+      assert_decoration('J');
       int64_t n;
       char* c = reinterpret_cast<char*>(&n);
 
@@ -82,7 +82,7 @@ namespace casadi {
     }
 
     void Serializer::pack(casadi_int e) {
-      decorate('I');
+      decorate('J');
       int64_t n = e;
       const char* c = reinterpret_cast<const char*>(&n);
       for (int j=0;j<8;++j) out.put(c[j]);
@@ -198,9 +198,11 @@ namespace casadi {
           nodes.push_back(e);
           break;
         case 'r': // reference
-          casadi_int i;
-          unpack(i);
-          e = nodes.at(i);
+          {
+            casadi_int k;
+            unpack(k);
+            e = nodes.at(k);
+          }
           break;
         default:
           casadi_assert_dev(false);

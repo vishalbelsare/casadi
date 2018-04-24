@@ -412,17 +412,23 @@ namespace casadi {
   }
 
   void MXNode::serialize(Serializer& s) const {
+    casadi_int i = op();
+    casadi_assert_dev(i<255 && i>=0);
+    s.pack(static_cast<char>(i));
     s.pack(op());
     s.pack(dep_);
     s.pack(sparsity_);
+    uout() << "op" << op() << std::endl;
     serialize_node(s);
   }
 
   MXNode::Info MXNode::deserialize_info(DeSerializer& s) {
+    uout() << "deser" << std::endl;
     Info ret;
     s.unpack(ret.op);
     s.unpack(ret.deps);
     s.unpack(ret.sp);
+    uout() << "op" << ret.op << std::endl;
     return ret;
   }
 
