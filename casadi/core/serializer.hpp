@@ -33,6 +33,7 @@
 #include <set>
 
 namespace casadi {
+  class Slice;
 
   /** \brief Helper class for Serialization
       \author Joris Gillis
@@ -47,6 +48,7 @@ namespace casadi {
     void unpack(Sparsity& e);
     void unpack(MX& e);
     void unpack(Function& e);
+    void unpack(Slice& e);
     void unpack(int& e);
     void unpack(bool& e);
     void unpack(casadi_int& e);
@@ -131,6 +133,7 @@ namespace casadi {
     void pack(const Sparsity& e);
     void pack(const MX& e);
     void pack(const Function& e);
+    void pack(const Slice& e);
     void pack(int e);
     void pack(bool e);
     void pack(casadi_int e);

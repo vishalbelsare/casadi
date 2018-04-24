@@ -63,6 +63,7 @@ namespace casadi {
     /** \brief  Check if a multiple output node */
     bool has_output() const override {return true;}
 
+    explicit MultipleOutput(const MXNode::Info& info) : MXNode(info) {}
   };
 
   class CASADI_EXPORT OutputNode : public MXNode {

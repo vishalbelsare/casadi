@@ -71,6 +71,12 @@ namespace casadi {
     temp = 0;
   }
 
+  MXNode::MXNode(const Info& e) {
+    temp = 0;
+    dep_ = e.deps;
+    sparsity_ = e.sp;
+  }
+
   MXNode::~MXNode() {
 
     // Start destruction method if any of the dependencies has dependencies
@@ -444,7 +450,7 @@ namespace casadi {
 
     auto it = MXNode::deserialize_map.find(op);
     if (it==MXNode::deserialize_map.end()) {
-      casadi_error("Not implemented op " + str(casadi_int(op)));
+      casadi_error("Not implemented op " + str(casadi_int(op)) + ":" + str(OP_GETNONZEROS));
     } else {
       return it->second(s);
     }
@@ -997,6 +1003,21 @@ namespace casadi {
     {OP_CONST, ConstantMX::deserialize},
     {OP_PROJECT, Project::deserialize},
     {OP_CALL, Call::deserialize},
+    {OP_NORM1, Norm1::deserialize},
+    {OP_NORM2, Norm2::deserialize},
+    {OP_NORMINF, NormInf::deserialize},
+    {OP_NORMF, NormF::deserialize},
+    {OP_GETNONZEROS, GetNonzeros::deserialize},
+    {OP_ADDNONZEROS, SetNonzeros<true>::deserialize},
+    {OP_SETNONZEROS, SetNonzeros<false>::deserialize},
+    {OP_HORZCAT, Horzcat::deserialize},
+    {OP_VERTCAT, Vertcat::deserialize},
+    {OP_DIAGCAT, Diagcat::deserialize},
+    {OP_HORZSPLIT, Horzsplit::deserialize},
+    {OP_VERTSPLIT, Vertsplit::deserialize},
+    {OP_DIAGSPLIT, Diagsplit::deserialize},
+    {OP_DOT, Dot::deserialize},
+    {OP_TRANSPOSE, Transpose::deserialize},
     {-1, OutputNode::deserialize}
   };
 

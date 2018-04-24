@@ -26,6 +26,7 @@
 
 #include "serializer.hpp"
 #include "function_internal.hpp"
+#include "slice.hpp"
 #include <iomanip>
 
 using namespace std;
@@ -190,6 +191,16 @@ namespace casadi {
     void DeSerializer::unpack(Function& e) {
       assert_decoration('X');
       shared_unpack(e, functions);
+    }
+
+    void Serializer::pack(const Slice& e) {
+      decorate('S');
+      e.serialize(*this);
+    }
+
+    void DeSerializer::unpack(Slice& e) {
+      assert_decoration('S');
+      e = Slice::deserialize(*this);
     }
 
 } // namespace casadi

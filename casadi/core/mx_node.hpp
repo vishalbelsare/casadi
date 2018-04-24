@@ -435,6 +435,9 @@ namespace casadi {
     static void copy_rev(bvec_t* arg, bvec_t* res, casadi_int len);
 
     static std::map<casadi_int, MX (*)(DeSerializer&)> deserialize_map;
+
+  protected:
+    explicit MXNode(const Info& e);
   };
 
   /// \endcond

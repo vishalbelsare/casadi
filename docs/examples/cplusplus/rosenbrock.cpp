@@ -47,14 +47,15 @@ int main(){
     MX x = MX::sym("x");
     MX y = MX::sym("y",2);
 
-    MX w = atan2(3*y,x);
-    MX z = sin(2*x)*w+1;
+    MX w = atan2(3*norm_fro(y)*y,x);
+    MX z = sin(2*x)*w(0)+1;
     uout() << "z" << z << std::endl;
     Function g = Function("g",{x,y},{w-x});
 
     MX q = g(std::vector<MX>{2*x,z})[0];
 
-    f = Function("f",{x,y},{q+1});
+    f = Function("f",{x,y},{q+1,jacobian(q, vertcat(x, y))});
+
     f.disp(uout(), true);
 
 
