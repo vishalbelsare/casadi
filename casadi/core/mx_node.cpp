@@ -414,27 +414,24 @@ namespace casadi {
   void MXNode::serialize(Serializer& s) const {
     casadi_int i = op();
     casadi_assert_dev(i<255 && i>=0);
-    s.pack(static_cast<char>(i));
-    s.pack(op());
-    s.pack(dep_);
-    s.pack(sparsity_);
-    uout() << "op" << op() << std::endl;
+    s.pack("MXNode::op", static_cast<char>(i));
+    s.pack("MXNode::op2", op());
+    s.pack("MXNode::deps", dep_);
+    s.pack("MXNode::sp", sparsity_);
     serialize_node(s);
   }
 
   MXNode::Info MXNode::deserialize_info(DeSerializer& s) {
-    uout() << "deser" << std::endl;
     Info ret;
-    s.unpack(ret.op);
-    s.unpack(ret.deps);
-    s.unpack(ret.sp);
-    uout() << "op" << ret.op << std::endl;
+    s.unpack("MXNode::op2", ret.op);
+    s.unpack("MXNode::deps", ret.deps);
+    s.unpack("MXNode::sp", ret.sp);
     return ret;
   }
 
   MX MXNode::deserialize(DeSerializer& s) {
     char i;
-    s.unpack(i);
+    s.unpack("MXNode::op", i);
     unsigned char op = i;
 
     if (casadi_math<MX>::is_binary(op)) {

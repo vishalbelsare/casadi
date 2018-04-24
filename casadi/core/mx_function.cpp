@@ -1644,18 +1644,18 @@ namespace casadi {
   }
 
   void MXFunction::serialize_function(Serializer &s) const {
-    s.pack(casadi_int(algorithm_.size()));
+    s.pack("MXFunction::n_instr", casadi_int(algorithm_.size()));
 
     // Loop over algorithm
     for (const auto& e : algorithm_) {
-      s.pack(e.data);
-      s.pack(e.arg);
-      s.pack(e.res);
+      s.pack("MXFunction::alg::data", e.data);
+      s.pack("MXFunction::alg::arg", e.arg);
+      s.pack("MXFunction::alg::res", e.res);
     }
 
-    s.pack(workloc_);
-    s.pack(free_vars_);
-    s.pack(default_in_);
+    s.pack("MXFunction::workloc", workloc_);
+    s.pack("MXFunction::free_vars", free_vars_);
+    s.pack("MXFunction::default_in", default_in_);
 
     s.pack(in_);
     s.pack(out_);
@@ -1665,19 +1665,19 @@ namespace casadi {
     Info info;
     info.xfunction.function = FunctionInternal::deserialize_info(s);
     casadi_int n_instructions;
-    s.unpack(n_instructions);
+    s.unpack("MXFunction::n_instr", n_instructions);
     info.algorithm.resize(n_instructions);
     for (casadi_int k=0;k<n_instructions;++k) {
       AlgEl& e = info.algorithm[k];
-      s.unpack(e.data);
+      s.unpack("MXFunction::alg::data", e.data);
       e.op = e.data.op();
-      s.unpack(e.arg);
-      s.unpack(e.res);
+      s.unpack("MXFunction::alg::arg", e.arg);
+      s.unpack("MXFunction::alg::res", e.res);
     }
 
-    s.unpack(info.workloc);
-    s.unpack(info.free_vars);
-    s.unpack(info.default_in);
+    s.unpack("MXFunction::workloc", info.workloc);
+    s.unpack("MXFunction::free_vars", info.free_vars);
+    s.unpack("MXFunction::default_in", info.default_in);
 
     s.unpack(info.xfunction.in);
     s.unpack(info.xfunction.out);

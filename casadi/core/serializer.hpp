@@ -64,6 +64,17 @@ namespace casadi {
       for (auto & i : e) unpack(i);
     }
 
+
+    template <class T>
+    void unpack(const std::string& descr, T& e) {
+      std::string d;
+      unpack(d);
+      uout() << "unpack started: " << descr << std::endl;
+      casadi_assert(d==descr, "Mismatch: '" + descr + " expected, got '" + d + "'.");
+      unpack(e);
+      uout() << "unpack: " << descr << ": " << e << std::endl;
+    }
+
     void assert_decoration(char e);
 #endif
 
@@ -108,6 +119,14 @@ namespace casadi {
       pack('V');
       pack(casadi_int(e.size()));
       for (const auto & i : e) pack(i);
+    }
+
+    template <class T>
+    void pack(const std::string& descr, const T& e) {
+      uout() << "  pack started: " << descr << std::endl;
+      pack(descr);
+      pack(e);
+      uout() << "  pack: " << descr << ": " << e << std::endl;
     }
 
     void decorate(char e);

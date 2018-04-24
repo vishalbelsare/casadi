@@ -93,18 +93,18 @@ namespace casadi {
   }
 
   void IOInstruction::serialize_node(Serializer& s) const {
-    s.pack(ind_);
-    s.pack(segment_);
-    s.pack(offset_);
+    s.pack("IOInstruction::ind", ind_);
+    s.pack("IOInstruction::segment", segment_);
+    s.pack("IOInstruction::offset", offset_);
   }
 
   MX Input::deserialize(DeSerializer& s) {
     MXNode::Info d = MXNode::deserialize_info(s);
 
     casadi_int ind, segment, offset;
-    s.unpack(ind);
-    s.unpack(segment);
-    s.unpack(offset);
+    s.unpack("IOInstruction::ind", ind);
+    s.unpack("IOInstruction::segment", segment);
+    s.unpack("IOInstruction::offset", offset);
     MX r;
     r.own(new Input(d.sp, ind, segment, offset));
     return r;
@@ -114,9 +114,9 @@ namespace casadi {
     MXNode::Info d = MXNode::deserialize_info(s);
 
     casadi_int ind, segment, offset;
-    s.unpack(ind);
-    s.unpack(segment);
-    s.unpack(offset);
+    s.unpack("IOInstruction::ind", ind);
+    s.unpack("IOInstruction::segment", segment);
+    s.unpack("IOInstruction::offset", offset);
     MX r;
     r.own(new Output(d.deps[0], ind, segment, offset));
     return r;

@@ -249,13 +249,13 @@ namespace casadi {
 
   void ConstantMX::serialize_node(Serializer& s) const {
     DM v = get_DM();
-    s.pack(v.nonzeros());
+    s.pack("ConstantMX::nonzeros", v.nonzeros());
   }
 
   MX ConstantMX::deserialize(DeSerializer& s) {
     MXNode::Info d = MXNode::deserialize_info(s);
     std::vector<double> v;
-    s.unpack(v);
+    s.unpack("ConstantMX::nonzeros", v);
     return DM(d.sp, v);
   }
 

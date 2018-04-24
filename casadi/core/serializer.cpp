@@ -177,13 +177,13 @@ namespace casadi {
       auto it = MX_nodes_.find(e.get());
       if (it==MX_nodes_.end()) {
         // Not found
-        pack('d'); // definition
+        pack("MXflag", 'd'); // definition
         e.serialize(*this);
         casadi_int r = MX_nodes_.size();
         MX_nodes_[e.get()] = r;
       } else {
-        pack('r'); // reference
-        pack(it->second);
+        pack("MXflag", 'r'); // reference
+        pack("MXreference", it->second);
       }
     }
 
@@ -191,7 +191,7 @@ namespace casadi {
       assert_decoration('X');
 
       char i;
-      unpack(i);
+      unpack("MXflag", i);
       switch (i) {
         case 'd': // definition
           e = MX::deserialize(*this);
@@ -200,7 +200,7 @@ namespace casadi {
         case 'r': // reference
           {
             casadi_int k;
-            unpack(k);
+            unpack("MXreference", k);
             e = nodes.at(k);
           }
           break;

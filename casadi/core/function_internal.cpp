@@ -2875,6 +2875,13 @@ namespace casadi {
     s.pack(verbose_);
   }
 
+  ProtoFunction::Info ProtoFunction::deserialize_info(DeSerializer& s) {
+    Info ret;
+    s.unpack(ret.name);
+    s.unpack(ret.verbose);
+    return ret;
+  }
+
   void FunctionInternal::serialize(Serializer& s) const {
     ProtoFunction::serialize(s);
     s.pack(sparsity_in_);
@@ -2891,33 +2898,6 @@ namespace casadi {
     s.pack(casadi_int(sz_w_tmp_));
 
     serialize_function(s);
-  }
-
-  FunctionInternal::FunctionInternal(const Info& e) : ProtoFunction(e.proto),
-    n_in_(e.sp_in.size()), n_out_(e.sp_out.size()),
-    sparsity_in_(e.sp_in), sparsity_out_(e.sp_out),
-    name_in_(e.name_in), name_out_(e.name_out),
-    eval_(nullptr),
-
-    sz_arg_per_(e.sz_arg_per),
-    sz_res_per_(e.sz_res_per),
-    sz_iw_per_(e.sz_iw_per),
-    sz_w_per_(e.sz_w_per),
-    sz_arg_tmp_(e.sz_arg_tmp),
-    sz_res_tmp_(e.sz_res_tmp),
-    sz_iw_tmp_(e.sz_iw_tmp),
-    sz_w_tmp_(e.sz_w_tmp) {
-
-      jit_ = false;
-
-  }
-
-
-  ProtoFunction::Info ProtoFunction::deserialize_info(DeSerializer& s) {
-    Info ret;
-    s.unpack(ret.name);
-    s.unpack(ret.verbose);
-    return ret;
   }
 
   FunctionInternal::Info FunctionInternal::deserialize_info(DeSerializer& s) {
@@ -2939,6 +2919,26 @@ namespace casadi {
 
     return ret;
   }
+
+  FunctionInternal::FunctionInternal(const Info& e) : ProtoFunction(e.proto),
+    n_in_(e.sp_in.size()), n_out_(e.sp_out.size()),
+    sparsity_in_(e.sp_in), sparsity_out_(e.sp_out),
+    name_in_(e.name_in), name_out_(e.name_out),
+    eval_(nullptr),
+
+    sz_arg_per_(e.sz_arg_per),
+    sz_res_per_(e.sz_res_per),
+    sz_iw_per_(e.sz_iw_per),
+    sz_w_per_(e.sz_w_per),
+    sz_arg_tmp_(e.sz_arg_tmp),
+    sz_res_tmp_(e.sz_res_tmp),
+    sz_iw_tmp_(e.sz_iw_tmp),
+    sz_w_tmp_(e.sz_w_tmp) {
+
+      jit_ = false;
+
+  }
+
 
   std::map<std::string, Function (*)(DeSerializer&)> FunctionInternal::deserialize_map = {
     {"MXFunction", MXFunction::deserialize}

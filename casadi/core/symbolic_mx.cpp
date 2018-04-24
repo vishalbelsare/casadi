@@ -91,13 +91,13 @@ namespace casadi {
   }
 
   void SymbolicMX::serialize_node(Serializer& s) const {
-    s.pack(name_);
+    s.pack("SymbolicMX::name", name_);
   }
 
   MX SymbolicMX::deserialize(DeSerializer& s) {
     MXNode::Info d = MXNode::deserialize_info(s);
     std::string name;
-    s.unpack(name);
+    s.unpack("SymbolicMX::name", name);
     return MX::sym(name, d.sp);
   }
 

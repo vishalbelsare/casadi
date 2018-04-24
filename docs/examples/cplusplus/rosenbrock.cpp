@@ -38,15 +38,17 @@ Joel Andersson, 2015-2016
 
 int main(){
 
+  Function f;
+
   {
     std::ofstream out("test.dat", ios::binary);
     Serializer s(out);
 
     MX x = MX::sym("x");
     MX y = MX::sym("y",2);
-    MX z = sqrt(x)*atan2(y,x)+1;
+    MX z = sin(2*x)*atan2(3*y,x)+1;
     uout() << "z" << z << std::endl;
-    Function f = Function("f",{x,y},{z});
+    f = Function("f",{x,y},{z});
     f.disp(uout(), true);
 
     s.add(f);
@@ -63,6 +65,7 @@ int main(){
 
     uout() << std::endl;
 
+    std::cout << f(std::vector<DM>{1 , std::vector<double>{2, 3}}) << std::endl;
     std::cout << a(std::vector<DM>{1 , std::vector<double>{2, 3}}) << std::endl;
   }
 
