@@ -117,7 +117,7 @@ namespace casadi {
     }
 
     void DeSerializer::unpack(char& e) {
-      in >> e;
+      in.get(e);
     }
 
     void Serializer::pack(char e) {
