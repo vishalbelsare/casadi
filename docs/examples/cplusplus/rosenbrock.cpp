@@ -51,8 +51,9 @@ int main(){
     MX z = sin(2*x)*w(0)+1;
     uout() << "z" << z << std::endl;
     Function g = Function("g",{x,y},{w-x});
+    Function gmap = g.map(2, "thread", 2);
 
-    MX q = g(std::vector<MX>{2*x,z})[0];
+    MX q = gmap(std::vector<MX>{horzcat(2*x,x-y(1)),horzcat(z+y,cos(z+y))})[0];
 
     f = Function("f",{x,y},{q+1,jacobian(q, vertcat(x, y))});
 

@@ -32,6 +32,7 @@
 #include "serializer.hpp"
 #include "mx_function.hpp"
 #include "sx_function.hpp"
+#include "map.hpp"
 
 #include <typeinfo>
 #include <cctype>
@@ -2951,6 +2952,9 @@ namespace casadi {
   std::map<std::string, Function (*)(DeSerializer&)> FunctionInternal::deserialize_map = {
     {"MXFunction", MXFunction::deserialize},
     {"SXFunction", SXFunction::deserialize},
+    {"Map", Map::deserialize},
+    {"MapThread", MapThread::deserialize},
+    {"MapOmp", MapOmp::deserialize},
   };
 
 } // namespace casadi
