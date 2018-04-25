@@ -53,6 +53,8 @@
 #include "io_instruction.hpp"
 #include "symbolic_mx.hpp"
 #include "constant_mx.hpp"
+#include "get_elements.hpp"
+
 
 // Template implementations
 #include "setnonzeros_impl.hpp"
@@ -1018,7 +1020,15 @@ namespace casadi {
     {OP_DIAGSPLIT, Diagsplit::deserialize},
     {OP_DOT, Dot::deserialize},
     {OP_TRANSPOSE, Transpose::deserialize},
+    {OP_RANK1, Rank1::deserialize},
+    {OP_RESHAPE, Reshape::deserialize},
+    {OP_INVERSE, Inverse::deserialize},
+    {OP_GET_ELEMENTS, GetElements::deserialize},
+    {OP_FIND, Find::deserialize},
+    {OP_MMIN, MMin::deserialize},
+    {OP_MMAX, MMax::deserialize},
     {-1, OutputNode::deserialize}
+
   };
 
 
