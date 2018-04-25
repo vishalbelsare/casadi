@@ -78,7 +78,7 @@ namespace casadi {
       int64_t n;
       char* c = reinterpret_cast<char*>(&n);
 
-      for (int j=0;j<8;++j) in.get(c[j]);
+      for (int j=0;j<8;++j) unpack(c[j]);
       e = n;
     }
 
@@ -86,7 +86,7 @@ namespace casadi {
       decorate('J');
       int64_t n = e;
       const char* c = reinterpret_cast<const char*>(&n);
-      for (int j=0;j<8;++j) out.put(c[j]);
+      for (int j=0;j<8;++j) pack(c[j]);
     }
 
     void DeSerializer::unpack(int& e) {
@@ -94,7 +94,7 @@ namespace casadi {
       int32_t n;
       char* c = reinterpret_cast<char*>(&n);
 
-      for (int j=0;j<4;++j) in.get(c[j]);
+      for (int j=0;j<4;++j) unpack(c[j]);
       e = n;
     }
 
@@ -102,27 +102,35 @@ namespace casadi {
       decorate('i');
       int32_t n = e;
       const char* c = reinterpret_cast<const char*>(&n);
-      for (int j=0;j<4;++j) out.put(c[j]);
+      for (int j=0;j<4;++j) pack(c[j]);
     }
 
     void DeSerializer::unpack(bool& e) {
       assert_decoration('b');
       char n;
-      in.get(n);
+      unpack(n);
       e = n;
     }
 
     void Serializer::pack(bool e) {
       decorate('b');
-      out.put(static_cast<char>(e));
+      pack(static_cast<char>(e));
     }
 
     void DeSerializer::unpack(char& e) {
+      unsigned char ref = 'a';
       in.get(e);
+      char t;
+      in.get(t);
+      e = (reinterpret_cast<unsigned char&>(e)-ref) + ((reinterpret_cast<unsigned char&>(t)-ref) << 4);
     }
 
     void Serializer::pack(char e) {
-      out.put(e);
+      unsigned char ref = 'a';
+      // Note: outputstreams work neatly with std::hex,
+      // but inputstreams don't
+      out.put(ref + (reinterpret_cast<unsigned char&>(e) % 16));
+      out.put(ref + (reinterpret_cast<unsigned char&>(e) >> 4));
     }
 
     void Serializer::pack(const std::string& e) {
@@ -130,7 +138,7 @@ namespace casadi {
       int s = e.size();
       pack(s);
       const char* c = e.c_str();
-      for (int j=0;j<s;++j) out.put(c[j]);
+      for (int j=0;j<s;++j) pack(c[j]);
     }
 
     void DeSerializer::unpack(std::string& e) {
@@ -138,19 +146,19 @@ namespace casadi {
       int s;
       unpack(s);
       e.resize(s);
-      for (int j=0;j<s;++j) in.get(e[j]);
+      for (int j=0;j<s;++j) unpack(e[j]);
     }
 
     void DeSerializer::unpack(double& e) {
       assert_decoration('d');
       char* c = reinterpret_cast<char*>(&e);
-      for (int j=0;j<8;++j) in.get(c[j]);
+      for (int j=0;j<8;++j) unpack(c[j]);
     }
 
     void Serializer::pack(double e) {
       decorate('d');
       const char* c = reinterpret_cast<const char*>(&e);
-      for (int j=0;j<8;++j) out.put(c[j]);
+      for (int j=0;j<8;++j) pack(c[j]);
     }
 
     void Serializer::pack(const Sparsity& e) {

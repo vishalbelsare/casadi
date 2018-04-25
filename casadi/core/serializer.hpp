@@ -41,9 +41,6 @@ namespace casadi {
   */
   class CASADI_EXPORT DeSerializer : public VectorCache {
   public:
-
-    //DeSerializer(std::string &f_name);
-
     DeSerializer(std::istream &in_s);
     void unpack(Sparsity& e);
     void unpack(MX& e);
@@ -81,7 +78,7 @@ namespace casadi {
       std::string d;
       unpack(d);
       uout() << "unpack started: " << descr << std::endl;
-      casadi_assert(d==descr, "Mismatch: '" + descr + " expected, got '" + d + "'.");
+      casadi_assert(d==descr, "Mismatch: '" + descr + "' expected, got '" + d + "'.");
       unpack(e);
       uout() << "unpack: " << descr << ": " << e << std::endl;
     }
@@ -122,7 +119,6 @@ namespace casadi {
 
   /** \brief Helper class for Serialization
 
-      public API should not allow progressive adding of Functions
 
       \author Joris Gillis
       \date 2018
@@ -130,11 +126,7 @@ namespace casadi {
   class CASADI_EXPORT Serializer : public VectorCache {
   public:
     /// Constructor
-
-#ifndef SWIG
     Serializer(std::ostream& out, const Dict& opts = Dict());
-#endif
-    //Serializer(std::string& fname, const Dict& opts = Dict());
 
     /// Add a function
     casadi_int add(const Function& f);
