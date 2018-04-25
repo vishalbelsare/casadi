@@ -3648,7 +3648,7 @@ namespace casadi{
 
   %matlabcode %{
      function s = saveobj(obj)
-       try
+        try
             s.serialization = obj.serialize();
         catch exception
             warning(['Serializing of CasADi Function failed:' getReport(exception) ]);

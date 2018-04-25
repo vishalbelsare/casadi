@@ -163,22 +163,12 @@ namespace casadi {
 
     void Serializer::pack(const Sparsity& e) {
       decorate('S');
-      if (e.is_null()) {
-        pack(std::vector<casadi_int>{});
-      } else {
-        pack(e.compress());
-      }
+      shared_pack(e, sparsities_);
     }
 
     void DeSerializer::unpack(Sparsity& e) {
       assert_decoration('S');
-      std::vector<casadi_int> i;
-      unpack(i);
-      if (i.size()==0) {
-        e = Sparsity();
-      } else {
-        e = Sparsity::compressed(i);
-      }
+      shared_unpack(e, sparsities);
     }
 
     void Serializer::pack(const MX& e) {

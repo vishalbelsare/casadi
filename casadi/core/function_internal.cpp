@@ -33,6 +33,7 @@
 #include "mx_function.hpp"
 #include "sx_function.hpp"
 #include "map.hpp"
+#include "switch.hpp"
 
 #include <typeinfo>
 #include <cctype>
@@ -2955,6 +2956,7 @@ namespace casadi {
     {"Map", Map::deserialize},
     {"MapThread", MapThread::deserialize},
     {"MapOmp", MapOmp::deserialize},
+    {"Switch", Switch::deserialize}
   };
 
 } // namespace casadi

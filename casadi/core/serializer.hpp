@@ -113,6 +113,7 @@ namespace casadi {
     std::vector<MX> nodes;
     std::vector<Function> functions;
     std::vector<SXElem> sx_nodes;
+    std::vector<Sparsity> sparsities;
   };
 
 
@@ -185,7 +186,7 @@ namespace casadi {
     std::map<MXNode*, casadi_int> MX_nodes_;
     std::map<FunctionInternal*, casadi_int> functions_;
     std::map<SXNode*, casadi_int> SX_nodes_;
-
+    std::map<SparsityInternal*, casadi_int> sparsities_;
     std::ostream& out;
 
   };
