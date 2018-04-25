@@ -2812,21 +2812,50 @@ namespace casadi {
   }
 
   void ProtoFunction::serialize(Serializer& s) const {
-    s.pack(name_);
-    s.pack(verbose_);
+    s.pack("ProtoFunction::name", name_);
+    s.pack("ProtoFunction::verbose", verbose_);
   }
 
   void ProtoFunction::deserialize(DeSerializer& s, Info& e) {
-    s.unpack(e.name);
-    s.unpack(e.verbose);
+    s.unpack("ProtoFunction::name", e.name);
+    s.unpack("ProtoFunction::verbose", e.verbose);
   }
 
   void FunctionInternal::serialize(Serializer& s) const {
     ProtoFunction::serialize(s);
-    s.pack(sparsity_in_);
-    s.pack(sparsity_out_);
-    s.pack(name_in_);
-    s.pack(name_out_);
+    s.pack("FunctionInternal::sp_in", sparsity_in_);
+    s.pack("FunctionInternal::sp_out", sparsity_out_);
+    s.pack("FunctionInternal::name_in", name_in_);
+    s.pack("FunctionInternal::name_out", name_out_);
+
+    s.pack(jit_);
+
+    s.pack("FunctionInternal::has_refcount", has_refcount_);
+
+    s.pack("FunctionInternal::derivative_of", derivative_of_);
+
+    s.pack(jac_penalty_);
+
+    s.pack(enable_forward_);
+    s.pack(enable_reverse_);
+    s.pack(enable_jacobian_);
+    s.pack(enable_fd_);
+
+    s.pack(ad_weight_);
+    s.pack(ad_weight_sp_);
+
+    s.pack(max_num_dir_);
+
+    s.pack(regularity_check_);
+
+    s.pack(inputs_check_);
+
+    s.pack(print_time_);
+
+    s.pack(fd_step_);
+
+    s.pack(fd_method_);
+
     s.pack(casadi_int(sz_arg_per_));
     s.pack(casadi_int(sz_res_per_));
     s.pack(casadi_int(sz_iw_per_));
@@ -2841,10 +2870,38 @@ namespace casadi {
 
   void FunctionInternal::deserialize(DeSerializer& s, Info& e) {
     ProtoFunction::deserialize(s, e.proto);
-    s.unpack(e.sp_in);
-    s.unpack(e.sp_out);
-    s.unpack(e.name_in);
-    s.unpack(e.name_out);
+    s.unpack("FunctionInternal::sp_in", e.sp_in);
+    s.unpack("FunctionInternal::sp_out", e.sp_out);
+    s.unpack("FunctionInternal::name_in", e.name_in);
+    s.unpack("FunctionInternal::name_out", e.name_out);
+
+    s.unpack(e.jit);
+
+    s.unpack("FunctionInternal::has_refcount", e.has_refcount);
+
+    s.unpack("FunctionInternal::derivative_of", e.derivative_of);
+
+    s.unpack(e.jac_penalty);
+
+    s.unpack(e.enable_forward);
+    s.unpack(e.enable_reverse);
+    s.unpack(e.enable_jacobian);
+    s.unpack(e.enable_fd);
+
+    s.unpack(e.ad_weight);
+    s.unpack(e.ad_weight_sp);
+
+    s.unpack(e.max_num_dir);
+
+    s.unpack(e.regularity_check);
+
+    s.unpack(e.inputs_check);
+
+    s.unpack(e.print_time);
+
+    s.unpack(e.fd_step);
+
+    s.unpack(e.fd_method);
 
     s.unpack(e.sz_arg_per);
     s.unpack(e.sz_res_per);
@@ -2860,7 +2917,23 @@ namespace casadi {
     n_in_(e.sp_in.size()), n_out_(e.sp_out.size()),
     sparsity_in_(e.sp_in), sparsity_out_(e.sp_out),
     name_in_(e.name_in), name_out_(e.name_out),
+    jit_(e.jit),
     eval_(nullptr),
+    has_refcount_(e.has_refcount),
+    derivative_of_(e.derivative_of),
+    jac_penalty_(e.jac_penalty),
+    enable_forward_(e.enable_forward),
+    enable_reverse_(e.enable_reverse),
+    enable_jacobian_(e.enable_jacobian),
+    enable_fd_(e.enable_fd),
+    ad_weight_(e.ad_weight),
+    ad_weight_sp_(e.ad_weight_sp),
+    max_num_dir_(e.max_num_dir),
+    regularity_check_(e.regularity_check),
+    inputs_check_(e.inputs_check),
+    print_time_(e.print_time),
+    fd_step_(e.fd_step),
+    fd_method_(e.fd_method),
 
     sz_arg_per_(e.sz_arg_per),
     sz_res_per_(e.sz_res_per),
@@ -2871,7 +2944,6 @@ namespace casadi {
     sz_iw_tmp_(e.sz_iw_tmp),
     sz_w_tmp_(e.sz_w_tmp) {
 
-      jit_ = false;
 
   }
 

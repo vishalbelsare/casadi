@@ -807,8 +807,33 @@ namespace casadi {
       std::vector<std::string> name_in;
       std::vector<std::string> name_out;
 
+      bool jit;
+
+      bool has_refcount;
+
+      Function derivative_of;
+
+      double jac_penalty;
+
+      bool enable_forward, enable_reverse, enable_jacobian, enable_fd;
+
+      double ad_weight, ad_weight_sp;
+
+      casadi_int max_num_dir;
+
+      bool regularity_check;
+
+      bool inputs_check;
+
+      bool print_time;
+
+      double fd_step;
+
+      std::string fd_method;
+
       casadi_int sz_arg_per, sz_res_per, sz_iw_per, sz_w_per;
       casadi_int sz_arg_tmp, sz_res_tmp, sz_iw_tmp, sz_w_tmp;
+
     };
 
     /** \brief Info Constructor */

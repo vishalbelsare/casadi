@@ -1038,7 +1038,7 @@ namespace casadi {
 
   void Function::serialize(Serializer &s) const {
     if (is_null()) {
-      s.pack("Function::class_name", "null");
+      s.pack("Function::class_name", std::string("null"));
     } else {
       s.pack("Function::class_name", (*this)->class_name());
       (*this)->serialize(s);

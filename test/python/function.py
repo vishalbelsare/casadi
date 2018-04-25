@@ -1721,15 +1721,16 @@ class Functiontests(casadiTestCase):
 
     f = Function('f',[x],[p])
 
-    with self.assertInException("Cannot serialize SXFunction with free parameters"):
-      pickle.loads(pickle.dumps(f))
+    #with self.assertInException("Cannot serialize SXFunction with free parameters"):
+    pickle.loads(pickle.dumps(f))
 
 
     x = MX.sym("x")
     f = Function('f',[x],[x**2])
 
-    with self.assertInException("'serialize' not defined for MXFunction"):
-      pickle.loads(pickle.dumps(f))
+    fs = pickle.loads(pickle.dumps(f))
+    self.checkfunction(f,fs,inputs=[3.7],hessian=False)
+
 
   def test_string(self):
     x=MX.sym("x")

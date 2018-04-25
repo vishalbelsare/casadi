@@ -63,6 +63,8 @@ int main(){
 
 
     s.add(f);
+
+    uout() << f.serialize() << std::endl;
   }
 
   uout() << "read" << std::endl;
