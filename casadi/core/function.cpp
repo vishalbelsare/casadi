@@ -1037,13 +1037,18 @@ namespace casadi {
   }
 
   void Function::serialize(Serializer &s) const {
-    s.pack("Function::class_name", (*this)->class_name());
-    (*this)->serialize(s);
+    if (is_null()) {
+      s.pack("Function::class_name", "null");
+    } else {
+      s.pack("Function::class_name", (*this)->class_name());
+      (*this)->serialize(s);
+    }
   }
 
   Function Function::deserialize(DeSerializer& s) {
     std::string class_name;
     s.unpack("Function::class_name", class_name);
+    if (class_name=="null") return Function();
     auto it = FunctionInternal::deserialize_map.find(class_name);
     if (it==FunctionInternal::deserialize_map.end()) {
       casadi_error("Not implemented.");
