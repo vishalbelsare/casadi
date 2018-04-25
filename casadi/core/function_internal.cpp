@@ -31,6 +31,7 @@
 #include "finite_differences.hpp"
 #include "serializer.hpp"
 #include "mx_function.hpp"
+#include "sx_function.hpp"
 
 #include <typeinfo>
 #include <cctype>
@@ -43,6 +44,7 @@
 using namespace std;
 
 namespace casadi {
+
   Dict combine(const Dict& first, const Dict& second) {
     if (first.empty()) return second;
     if (second.empty()) return first;
@@ -1538,10 +1540,6 @@ namespace casadi {
     casadi_error("'export_code' not defined for " + class_name());
   }
 
-  void FunctionInternal::serialize(std::ostream &stream) const {
-    casadi_error("'serialize' not defined for " + class_name());
-  }
-
   void FunctionInternal::serialize_function(Serializer&s) const {
     casadi_error("'serialize_function' not defined for " + class_name());
   }
@@ -1555,63 +1553,6 @@ namespace casadi {
       ss << c;
     }
     casadi_assert_dev(s==ss.str());
-  }
-
-  void FunctionInternal::serialize_header(std::ostream &stream) const {
-    stream << "n" << name_.size() << name_;
-    stream << "i" << n_in_ << ":";
-    for (int i=0;i<n_in_;++i) stream << name_in_[i].size() << name_in_[i];
-    for (int i=0;i<n_in_;++i) sparsity_in_[i].serialize(stream);
-    stream << "o" << n_out_ << ":";
-    for (int i=0;i<n_out_;++i) stream << name_out_[i].size() << name_out_[i];
-    for (int i=0;i<n_out_;++i) sparsity_out_[i].serialize(stream);
-    stream << "w" << sz_w();
-    stream << "iw" << sz_iw();
-  }
-
-  void FunctionInternal::deserialize_header(std::istream& stream,
-      std::string& name,
-      std::vector<Sparsity>& sp_in, std::vector<Sparsity>& sp_out,
-      std::vector<std::string>& names_in, std::vector<std::string>& names_out,
-      casadi_int& sz_w, casadi_int& sz_iw) {
-    assert_read(stream, "n");
-    int name_size; stream >> name_size;
-    char c;
-    for (int i=0;i<name_size;++i) {
-      stream >> c;
-      name += c;
-    }
-    assert_read(stream, "i");
-    casadi_int n_in;
-    stream >> n_in; stream >> c;
-    for (int i=0;i<n_in;++i) {
-      std::string name;
-      int n; stream >> n;
-      for (int k=0;k<n;++k) {
-        stream >> c;
-        name+= c;
-      }
-      names_in.push_back(name);
-    }
-    for (int i=0;i<n_in;++i) sp_in.push_back(Sparsity::deserialize(stream));
-
-    assert_read(stream, "o");
-    casadi_int n_out;
-    stream >> n_out; stream >> c;
-    for (int i=0;i<n_out;++i) {
-      std::string name;
-      int n; stream >> n;
-      for (int k=0;k<n;++k) {
-        stream >> c;
-        name+= c;
-      }
-      names_out.push_back(name);
-    }
-    for (int i=0;i<n_out;++i) sp_out.push_back(Sparsity::deserialize(stream));
-    assert_read(stream, "w");
-    stream >> sz_w;
-    assert_read(stream, "iw");
-    stream >> sz_iw;
   }
 
   casadi_int FunctionInternal::nnz_in() const {
@@ -2936,7 +2877,8 @@ namespace casadi {
 
 
   std::map<std::string, Function (*)(DeSerializer&)> FunctionInternal::deserialize_map = {
-    {"MXFunction", MXFunction::deserialize}
+    {"MXFunction", MXFunction::deserialize},
+    {"SXFunction", SXFunction::deserialize},
   };
 
 } // namespace casadi

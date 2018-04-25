@@ -47,6 +47,15 @@ namespace casadi {
     DeSerializer(std::istream &in_s);
     void unpack(Sparsity& e);
     void unpack(MX& e);
+    void unpack(SXElem& e);
+    template <class T>
+    void unpack(Matrix<T>& e) {
+      Sparsity sp;
+      unpack("Matrix::sparsity", sp);
+      std::vector<T> nz;
+      unpack("Matrix::nonzeros", nz);
+      e = Matrix<T>(sp, nz, false);
+    }
     void unpack(Function& e);
     void unpack(Slice& e);
     void unpack(int& e);
@@ -81,7 +90,7 @@ namespace casadi {
     template <class T, class M>
     void shared_unpack(T& e, M& cache) {
       char i;
-      unpack(T::type_name() + "::flag", i);
+      unpack("Shared::flag", i);
       switch (i) {
         case 'd': // definition
           e = T::deserialize(*this);
@@ -90,7 +99,7 @@ namespace casadi {
         case 'r': // reference
           {
             casadi_int k;
-            unpack(T::type_name() + "::reference", k);
+            unpack("Shared::reference", k);
             e = cache.at(k);
           }
           break;
@@ -106,7 +115,7 @@ namespace casadi {
     std::istream& in;
     std::vector<MX> nodes;
     std::vector<Function> functions;
-
+    std::vector<SXElem> sx_nodes;
   };
 
 
@@ -132,6 +141,12 @@ namespace casadi {
 
     void pack(const Sparsity& e);
     void pack(const MX& e);
+    void pack(const SXElem& e);
+    template <class T>
+    void pack(const Matrix<T>& e) {
+      pack("Matrix::sparsity", e.sparsity());
+      pack("Matrix::nonzeros", e.nonzeros());
+    }
     void pack(const Function& e);
     void pack(const Slice& e);
     void pack(int e);
@@ -162,22 +177,22 @@ namespace casadi {
       auto it = map.find(e.get());
       if (it==map.end()) {
         // Not found
-        pack(T::type_name() + "::flag", 'd'); // definition
+        pack("Shared::flag", 'd'); // definition
         e.serialize(*this);
         casadi_int r = map.size();
         map[e.get()] = r;
       } else {
-        pack(T::type_name() + "::flag", 'r'); // reference
-        pack(T::type_name() + "::reference", it->second);
+        pack("Shared::flag", 'r'); // reference
+        pack("Shared::reference", it->second);
       }
     }
-
 
   private:
     std::vector<Function> added_functions_;
 
     std::map<MXNode*, casadi_int> MX_nodes_;
     std::map<FunctionInternal*, casadi_int> functions_;
+    std::map<SXNode*, casadi_int> SX_nodes_;
 
     std::ostream& out;
 

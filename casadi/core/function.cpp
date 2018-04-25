@@ -1032,7 +1032,8 @@ namespace casadi {
   }
 
   void Function::serialize(std::ostream &stream) const {
-    return (*this)->serialize(stream);
+    Serializer s(stream);
+    return (*this)->serialize(s);
   }
 
   void Function::serialize(Serializer &s) const {
@@ -1094,15 +1095,8 @@ namespace casadi {
   }
 
   Function Function::deserialize(std::istream& stream) {
-    char type;
-    stream >> type;
-    switch (type) {
-      case 'S':
-        return SXFunction::deserialize(stream);
-      default:
-        casadi_error("Not implemented");
-    }
-    return Function();
+    DeSerializer s(stream);
+    return deserialize(s);
   }
 
   Function Function::deserialize(const std::string& s) {
@@ -1110,7 +1104,6 @@ namespace casadi {
     ss << s;
     return deserialize(ss);
   }
-
 
   string Function::fix_name(const string& name) {
     // Quick return if already valid name

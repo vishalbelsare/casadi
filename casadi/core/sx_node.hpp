@@ -34,7 +34,6 @@
 /** \brief  Scalar expression (which also works as a smart pointer class to this class) */
 #include "sx_elem.hpp"
 
-
 /// \cond INTERNAL
 namespace casadi {
 
@@ -132,6 +131,15 @@ namespace casadi {
 
     // Reference counter -- counts the number of parents of the node
     unsigned int count;
+
+    void serialize(Serializer& s) const;
+
+    virtual void serialize_node(Serializer& s) const;
+
+    static SXElem deserialize(DeSerializer& s);
+
+    static std::map<casadi_int, SXElem (*)(DeSerializer&)> deserialize_map;
+
 
   };
 

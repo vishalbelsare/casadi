@@ -203,4 +203,14 @@ namespace casadi {
       e = Slice::deserialize(*this);
     }
 
+    void Serializer::pack(const SXElem& e) {
+      decorate('E');
+      shared_pack(e, SX_nodes_);
+    }
+
+    void DeSerializer::unpack(SXElem& e) {
+      assert_decoration('E');
+      shared_unpack(e, sx_nodes);
+    }
+
 } // namespace casadi

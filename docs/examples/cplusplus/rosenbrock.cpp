@@ -56,6 +56,9 @@ int main(){
 
     f = Function("f",{x,y},{q+1,jacobian(q, vertcat(x, y))});
 
+
+    f = f.expand();
+
     f.disp(uout(), true);
 
 
