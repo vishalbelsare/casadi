@@ -36,6 +36,13 @@
 #include <list>
 #include <limits>
 #include <unordered_map>
+#ifdef CASADI_WITH_THREAD
+#ifdef CASADI_WITH_THREAD_MINGW
+#include <mingw.mutex.h>
+#else // CASADI_WITH_THREAD_MINGW
+#include <mutex>
+#endif // CASADI_WITH_THREAD_MINGW
+#endif //CASADI_WITH_THREAD
 
 namespace casadi {
   // Forward declaration
@@ -907,6 +914,11 @@ namespace casadi {
     /// Construct a sparsity pattern from vectors, reuse cached pattern if possible
     void assign_cached(casadi_int nrow, casadi_int ncol,
                         const casadi_int* colind, const casadi_int* row, bool order_rows=false);
+
+    #ifdef CASADI_WITH_THREAD
+    /// Mutex for thread safety (parfor serialization/deserialization)
+     static std::mutex mtx_;
+    #endif // CASADI_WITH_THREAD
 
 #endif //SWIG
   };

@@ -1013,7 +1013,7 @@ namespace casadi {
     {OP_DETERMINANT, Determinant::deserialize},
     {OP_INVERSE, Inverse::deserialize},
     {OP_DOT, Dot::deserialize},
-    // Bilin
+    {OP_BILIN, Bilin::deserialize},
     {OP_RANK1, Rank1::deserialize},
     {OP_HORZCAT, Horzcat::deserialize},
     {OP_VERTCAT, Vertcat::deserialize},

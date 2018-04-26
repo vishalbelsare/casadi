@@ -776,8 +776,17 @@ namespace casadi {
     assign_cached(nrow, ncol, get_ptr(colind), get_ptr(row), order_rows);
   }
 
+  #ifdef CASADI_WITH_THREAD
+  std::mutex Sparsity::mtx_;
+  #endif // CASADI_WITH_THREAD
+
   void Sparsity::assign_cached(casadi_int nrow, casadi_int ncol,
       const casadi_int* colind, const casadi_int* row, bool order_rows) {
+
+    #ifdef CASADI_WITH_THREAD
+    std::lock_guard<std::mutex> lock(mtx_);
+    #endif // CASADI_WITH_THREAD
+
     // Scalars and empty patterns are handled separately
     if (ncol==0 && nrow==0) {
       // If empty

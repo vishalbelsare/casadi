@@ -59,6 +59,8 @@ int main(){
 
 
     q = solve(q,2*y,"lapackqr");
+    q+= bilin(DM(std::vector< std::vector<double> >{{1,3},{7,8}}),q,2*q);
+    
 
 
 
