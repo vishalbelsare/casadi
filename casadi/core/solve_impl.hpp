@@ -36,7 +36,8 @@ namespace casadi {
   template<bool Tr>
   Solve<Tr>::Solve(const MX& r, const MX& A, const Linsol& linear_solver) :
       linsol_(linear_solver) {
-    casadi_assert(r.size1() == A.size2(), "Solve::Solve: dimension mismatch.");
+    casadi_assert(r.size1() == A.size2(),
+      "Solve::Solve: dimension mismatch. Got r " + r.dim() + " and A " + A.dim());
     set_dep(r, A);
     set_sparsity(r.sparsity());
   }
@@ -266,6 +267,23 @@ namespace casadi {
     }
     // Solver specific codegen
     linsol_->generate(g, "ss", "rr", nrhs, Tr);
+  }
+
+  template<bool Tr>
+  void Solve<Tr>::serialize_node(Serializer& s) const {
+    s.pack("Solve::Tr", Tr);
+    s.pack("Solve::Linsol", linsol_);
+  }
+
+  template<bool Tr>
+  MX Solve<Tr>::deserialize(DeSerializer& s) {
+    MXNode::Info e;
+    MXNode::deserialize(s, e);
+    bool tr;
+    s.unpack("Solve::Tr", tr);
+    Linsol linsol;
+    s.unpack("Solve::Linsol", linsol);
+    return MX::create(new Solve(e.deps[0], e.deps[1], linsol));
   }
 
 } // namespace casadi

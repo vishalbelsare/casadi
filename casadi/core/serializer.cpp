@@ -23,10 +23,12 @@
  */
 
 
-
+#include "function.hpp"
 #include "serializer.hpp"
+
 #include "function_internal.hpp"
 #include "slice.hpp"
+#include "linsol.hpp"
 #include <iomanip>
 
 using namespace std;
@@ -189,6 +191,16 @@ namespace casadi {
     void DeSerializer::unpack(Function& e) {
       assert_decoration('X');
       shared_unpack(e, functions);
+    }
+
+    void Serializer::pack(const Linsol& e) {
+      decorate('L');
+      shared_pack(e, linsols_);
+    }
+
+    void DeSerializer::unpack(Linsol& e) {
+      assert_decoration('L');
+      shared_unpack(e, linsols);
     }
 
     void Serializer::pack(const Slice& e) {

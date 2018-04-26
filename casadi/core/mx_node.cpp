@@ -54,7 +54,7 @@
 #include "symbolic_mx.hpp"
 #include "constant_mx.hpp"
 #include "get_elements.hpp"
-
+#include "map.hpp"
 
 // Template implementations
 #include "setnonzeros_impl.hpp"
@@ -464,11 +464,11 @@ namespace casadi {
     MX x = shared_from_this<MX>();
 
     casadi_assert(y.size2()==z.size2(),
-      "Dimension error. Got y=" + str(y.size2()) + " and z=" + z.dim() + ".");
+      "Dimension error x.mac(z). Got y=" + str(y.size2()) + " and z=" + z.dim() + ".");
     casadi_assert(x.size1()==z.size1(),
-      "Dimension error. Got x=" + x.dim() + " and z=" + z.dim() + ".");
+      "Dimension error x.mac(z). Got x=" + x.dim() + " and z=" + z.dim() + ".");
     casadi_assert(y.size1()==x.size2(),
-      "Dimension error. Got y=" + str(y.size1()) + " and x" + x.dim() + ".");
+      "Dimension error x.mac(z). Got y=" + str(y.size1()) + " and x" + x.dim() + ".");
     if (x.is_dense() && y.is_dense() && z.is_dense()) {
       return MX::create(new DenseMultiplication(z, x, y));
     } else {
@@ -997,38 +997,54 @@ namespace casadi {
     }
   }
 
+
   // Note: binary/unary operations are ommitted here
   std::map<casadi_int, MX (*)(DeSerializer&)> MXNode::deserialize_map = {
     {OP_INPUT, Input::deserialize},
     {OP_OUTPUT, Output::deserialize},
     {OP_PARAMETER, SymbolicMX::deserialize},
     {OP_CONST, ConstantMX::deserialize},
-    {OP_PROJECT, Project::deserialize},
     {OP_CALL, Call::deserialize},
-    {OP_NORM1, Norm1::deserialize},
-    {OP_NORM2, Norm2::deserialize},
-    {OP_NORMINF, NormInf::deserialize},
-    {OP_NORMF, NormF::deserialize},
-    {OP_GETNONZEROS, GetNonzeros::deserialize},
-    {OP_ADDNONZEROS, SetNonzeros<true>::deserialize},
-    {OP_SETNONZEROS, SetNonzeros<false>::deserialize},
+    {OP_FIND, Find::deserialize},
+    //{OP_MAP, Map::deserialize}, Map is a function
+    {OP_MTIMES, Multiplication::deserialize},
+    {OP_SOLVE, Solve<false>::deserialize},
+    {OP_TRANSPOSE, Transpose::deserialize},
+    {OP_DETERMINANT, Determinant::deserialize},
+    {OP_INVERSE, Inverse::deserialize},
+    {OP_DOT, Dot::deserialize},
+    // Bilin
+    {OP_RANK1, Rank1::deserialize},
     {OP_HORZCAT, Horzcat::deserialize},
     {OP_VERTCAT, Vertcat::deserialize},
     {OP_DIAGCAT, Diagcat::deserialize},
     {OP_HORZSPLIT, Horzsplit::deserialize},
     {OP_VERTSPLIT, Vertsplit::deserialize},
     {OP_DIAGSPLIT, Diagsplit::deserialize},
-    {OP_DOT, Dot::deserialize},
-    {OP_TRANSPOSE, Transpose::deserialize},
-    {OP_RANK1, Rank1::deserialize},
     {OP_RESHAPE, Reshape::deserialize},
-    {OP_INVERSE, Inverse::deserialize},
+    // OP_SUBREF
+    // OP_SUBASSIGN,
+    {OP_GETNONZEROS, GetNonzeros::deserialize},
+    {OP_ADDNONZEROS, SetNonzeros<true>::deserialize},
+    {OP_SETNONZEROS, SetNonzeros<false>::deserialize},
     {OP_GET_ELEMENTS, GetElements::deserialize},
-    {OP_FIND, Find::deserialize},
+    // OP_ADD_ELEMENTS
+    {OP_PROJECT, Project::deserialize},
+    // OP_ASSERTION
+    // OP_MONITOR
+    {OP_NORM1, Norm1::deserialize},
+    {OP_NORM2, Norm2::deserialize},
+    {OP_NORMINF, NormInf::deserialize},
+    {OP_NORMF, NormF::deserialize},
     {OP_MMIN, MMin::deserialize},
     {OP_MMAX, MMax::deserialize},
+    //OP_HORZREPMAT,
+    //OP_HORZREPSUM,
+    //OP_ERFINV,
+    //OP_PRINTME,
+    //OP_LIFT,
+    //OP_EINSTEIN
     {-1, OutputNode::deserialize}
-
   };
 
 

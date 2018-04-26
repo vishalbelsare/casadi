@@ -47,7 +47,7 @@ int main(){
     MX x = MX::sym("x");
     MX y = MX::sym("y",2);
 
-    MX w = atan2(3*norm_fro(y)*y,x);
+    MX w = if_else(x, atan2(3*norm_fro(y)*y,x), x-y, true);
     MX z = sin(2*x)*w(0)+1;
     uout() << "z" << z << std::endl;
     Function g = Function("g",{x,y},{w-x});
@@ -55,10 +55,17 @@ int main(){
 
     MX q = gmap(std::vector<MX>{horzcat(2*x,x-y(1)),horzcat(z+y,cos(z+y))})[0];
 
+
+
+
+    q = solve(q,2*y,"lapackqr");
+
+
+
     f = Function("f",{x,y},{q+1,jacobian(q, vertcat(x, y))});
 
 
-    f = f.expand();
+    //f = f.expand();
 
     f.disp(uout(), true);
 

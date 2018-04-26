@@ -26,25 +26,32 @@
 #ifndef CASADI_SERIALIZER_HPP
 #define CASADI_SERIALIZER_HPP
 
-#include "function.hpp"
-#include "code_generator.hpp"
 #include <sstream>
 #include <map>
 #include <set>
 
 namespace casadi {
   class Slice;
-
+  class Linsol;
+  class Sparsity;
+  class SparsityInternal;
+  class Function;
+  class FunctionInternal;
+  class MX;
+  class MXNode;
+  class SXElem;
+  class SXNode;
   /** \brief Helper class for Serialization
       \author Joris Gillis
       \date 2018
   */
-  class CASADI_EXPORT DeSerializer : public VectorCache {
+  class CASADI_EXPORT DeSerializer {
   public:
     DeSerializer(std::istream &in_s);
     void unpack(Sparsity& e);
     void unpack(MX& e);
     void unpack(SXElem& e);
+    void unpack(Linsol& e);
     template <class T>
     void unpack(Matrix<T>& e) {
       Sparsity sp;
@@ -114,6 +121,7 @@ namespace casadi {
     std::vector<Function> functions;
     std::vector<SXElem> sx_nodes;
     std::vector<Sparsity> sparsities;
+    std::vector<Linsol> linsols;
   };
 
 
@@ -124,7 +132,7 @@ namespace casadi {
       \author Joris Gillis
       \date 2018
   */
-  class CASADI_EXPORT Serializer : public VectorCache {
+  class CASADI_EXPORT Serializer {
   public:
     /// Constructor
     Serializer(std::ostream& out, const Dict& opts = Dict());
@@ -135,6 +143,7 @@ namespace casadi {
     void pack(const Sparsity& e);
     void pack(const MX& e);
     void pack(const SXElem& e);
+    void pack(const Linsol& e);
     template <class T>
     void pack(const Matrix<T>& e) {
       pack("Matrix::sparsity", e.sparsity());
@@ -187,6 +196,8 @@ namespace casadi {
     std::map<FunctionInternal*, casadi_int> functions_;
     std::map<SXNode*, casadi_int> SX_nodes_;
     std::map<SparsityInternal*, casadi_int> sparsities_;
+    std::map<SharedObjectInternal*, casadi_int> linsols_;
+
     std::ostream& out;
 
   };

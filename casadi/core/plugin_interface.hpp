@@ -25,6 +25,7 @@
 
 #include "function_internal.hpp"
 #include "global_options.hpp"
+#include "serializer.hpp"
 
 #include <stdlib.h>
 
@@ -129,6 +130,25 @@ namespace casadi {
                                         const std::string& pname, Problem problem);
     // Get name of the plugin
     virtual const char* plugin_name() const = 0;
+
+    struct Info {
+      std::string plugin_name;
+    };
+
+    void serialize_plugin(Serializer& s) const {
+      s.pack("PluginInterface::plugin_name", std::string(plugin_name()));
+    }
+
+    virtual void serialize_options(Serializer& s, const Dict&) const {};
+    static Dict deserialize_options(Serializer& s) {
+      return Dict();
+    };
+
+    static void deserialize(DeSerializer& s, Info& info) {
+      s.unpack("PluginInterface::plugin_name", info.plugin_name);
+    }
+
+
   };
 
   template<class Derived>
