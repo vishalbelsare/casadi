@@ -115,8 +115,8 @@ namespace casadi {
     ProtoFunction::serialize(s);
     PluginInterface<LinsolInternal>::serialize_plugin(s);
     s.pack("LinsolInternal::sp", sp_);
-    Dict opts;
-    PluginInterface<LinsolInternal>::serialize_options(s, opts);
+    //Dict opts;
+    //PluginInterface<LinsolInternal>::serialize_options(s, opts);
   }
 
   Linsol LinsolInternal::deserialize(DeSerializer& s) {

@@ -125,7 +125,7 @@ namespace casadi {
       bool verbose;
     };
 
-    explicit ProtoFunction(const Info& e) : name_(e.name), verbose_(e.verbose) {};
+    explicit ProtoFunction(const Info& e) : name_(e.name), verbose_(e.verbose) {}
 
     virtual void serialize(Serializer &s) const;
 

@@ -1452,7 +1452,7 @@ namespace casadi {
       return true;
     default:
       return false;
-    };
+    }
   }
 
   template<typename T>
@@ -1462,21 +1462,21 @@ namespace casadi {
       return true;
     default:
       return false;
-    };
+    }
   }
 
   template<typename T>
   inline casadi_int casadi_math<T>::ndeps(unsigned char op) {
     switch (op) {
-  case OP_CONST:
-  case OP_PARAMETER:
-  case OP_INPUT:
-    return 0;
-    CASADI_MATH_BINARY_BUILTIN
-      return 2;
-  default:
-    return 1;
-  }
+      case OP_CONST:
+      case OP_PARAMETER:
+      case OP_INPUT:
+        return 0;
+        CASADI_MATH_BINARY_BUILTIN
+          return 2;
+      default:
+        return 1;
+    }
   }
 
   template<typename T>

@@ -124,7 +124,8 @@ namespace casadi {
       in.get(e);
       char t;
       in.get(t);
-      e = (reinterpret_cast<unsigned char&>(e)-ref) + ((reinterpret_cast<unsigned char&>(t)-ref) << 4);
+      e = (reinterpret_cast<unsigned char&>(e)-ref) +
+          ((reinterpret_cast<unsigned char&>(t)-ref) << 4);
     }
 
     void Serializer::pack(char e) {

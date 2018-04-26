@@ -139,15 +139,9 @@ namespace casadi {
       s.pack("PluginInterface::plugin_name", std::string(plugin_name()));
     }
 
-    virtual void serialize_options(Serializer& s, const Dict&) const {};
-    static Dict deserialize_options(Serializer& s) {
-      return Dict();
-    };
-
     static void deserialize(DeSerializer& s, Info& info) {
       s.unpack("PluginInterface::plugin_name", info.plugin_name);
     }
-
 
   };
 
