@@ -302,6 +302,7 @@ namespace casadi {
       case OP_PARAMETER: // a parameter or input
         symb_loc.push_back(make_pair(algorithm_.size(), n));
         ae.i0 = n->temp;
+        ae.d = 0; // value not used, but set here to avoid uninitialized data in serialization
         break;
       case OP_OUTPUT: // output instruction
         ae.i0 = curr_oind;
@@ -930,7 +931,6 @@ namespace casadi {
     for (const auto& e : algorithm_) {
       s.pack("SXFunction::ScalarAtomic::op", e.op);
       s.pack("SXFunction::ScalarAtomic::i0", e.i0);
-      s.pack("SXFunction::ScalarAtomic::d", e.d);
       s.pack("SXFunction::ScalarAtomic::i1", e.i1);
       s.pack("SXFunction::ScalarAtomic::i2", e.i2);
     }
@@ -956,7 +956,6 @@ namespace casadi {
       AlgEl& e = info.algorithm[k];
       s.unpack("SXFunction::ScalarAtomic::op", e.op);
       s.unpack("SXFunction::ScalarAtomic::i0", e.i0);
-      s.unpack("SXFunction::ScalarAtomic::d", e.d);
       s.unpack("SXFunction::ScalarAtomic::i1", e.i1);
       s.unpack("SXFunction::ScalarAtomic::i2", e.i2);
     }
