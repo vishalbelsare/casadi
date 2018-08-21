@@ -60,7 +60,6 @@ print("Will test these integrators:")
 for cl, t, options in integrators:
   print(cl, " : ", t)
 
-@run_only(["lsolvers"])
 class Integrationtests(casadiTestCase):
 
   @slow()
@@ -227,6 +226,9 @@ class Integrationtests(casadiTestCase):
                 opts = {}
                 opts["t0"] = tstart_
                 opts["tf"] = tend_
+                for op in (options, f_options):
+                  for (k,v) in list(op.items()):
+                    opts[k] = v
                 integrator = casadi.integrator("integrator", Integrator, dae, opts)
                 integrator_in = {}
                 for k,v in list(point.items()):
